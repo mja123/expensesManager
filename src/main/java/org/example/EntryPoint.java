@@ -1,6 +1,7 @@
 package org.example;
 
 
+import org.example.model.Service;
 import org.example.utils.DTOParser;
 import org.example.model.dto.CategoryDTO;
 import org.example.model.dto.ExpenseDTO;
@@ -14,24 +15,20 @@ public class EntryPoint {
         System.out.println(DBConnection.getConnection());
         CategoryDTO categoryDTO = new CategoryDTO("food");
         ExpenseDTO expenseDTO = new ExpenseDTO("burger", 2000.0, new Date(Calendar.getInstance().getTimeInMillis()), categoryDTO);
-        DTOParser parser = new DTOParser();
-        try {
-            parser.getDTOData(categoryDTO).forEach((key1, value1) -> {
-                System.out.println("Identifier " + key1);
-                value1.forEach((key, value) -> {
-                    System.out.println("Type: " + key);
-                    System.out.println("Value: " + value);
-                });
+        new Service().create(categoryDTO);
+        DTOParser.getDTOData(categoryDTO).forEach((key1, value1) -> {
+            System.out.println("Identifier " + key1);
+            value1.forEach((key, value) -> {
+                System.out.println("Type: " + key);
+                System.out.println("Value: " + value);
             });
-            parser.getDTOData(expenseDTO).forEach((key1, value1) -> {
-                System.out.println("Identifier " + key1);
-                value1.forEach((key, value) -> {
-                    System.out.println("Type: " + key);
-                    System.out.println("Value: " + value);
-                });
+        });
+        DTOParser.getDTOData(expenseDTO).forEach((key1, value1) -> {
+            System.out.println("Identifier " + key1);
+            value1.forEach((key, value) -> {
+                System.out.println("Type: " + key);
+                System.out.println("Value: " + value);
             });
-        } catch (InvocationTargetException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+        });
     }
 }

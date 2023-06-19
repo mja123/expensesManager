@@ -13,7 +13,7 @@ public class DTOParser {
         List<Method>methods = Arrays.stream(object.getClass().getDeclaredMethods()).filter(m -> m.getName().startsWith("get")).toList();
 
         for (Method method : methods) {
-            String identifier = method.getName().substring(3);
+            String identifier = method.getName().substring(3).toLowerCase();
             Object type = method.getReturnType();
             Object value;
             try {
@@ -25,5 +25,18 @@ public class DTOParser {
             values.put(identifier, Map.of(type, value));
         }
         return values;
+    }
+
+    static public String tableName(IDTO object) {
+        String[] splitClassName = object.getClass().getName().split("\\.");
+        return makePlural(splitClassName[splitClassName.length -1].split("(!?DTO)")[0].toLowerCase());
+    }
+
+    static private String makePlural(String table) {
+        return switch (table.charAt(table.length() -1)) {
+            case 's' -> table;
+            case 'y' -> table.substring(0, table.length() - 1).concat("ies");
+            default -> table.concat("s");
+        };
     }
 }

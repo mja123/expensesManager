@@ -2,7 +2,6 @@ package org.example.utils;
 
 import org.example.model.dto.IDTO;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -10,11 +9,13 @@ import java.util.*;
 public class DTOParser {
     static public Map<String, Map<Object, Object>> getDTOData(IDTO object) {
         Map<String, Map<Object, Object>> values = new HashMap<>();
-        List<Method>methods = Arrays.stream(object.getClass().getDeclaredMethods()).filter(m -> m.getName().startsWith("get")).toList();
+        List<Method>methods = Arrays.stream(object.getClass().getDeclaredMethods())
+                .filter(m -> m.getName().startsWith("get"))
+                .toList();
 
         for (Method method : methods) {
             String identifier = method.getName().substring(3).toLowerCase();
-            Object type = method.getReturnType();
+            Object type = method.getReturnType().getTypeName();
             Object value;
             try {
                 value = method.invoke(object, (Object[]) null);

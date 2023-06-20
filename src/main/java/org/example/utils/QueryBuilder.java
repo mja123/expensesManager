@@ -27,11 +27,31 @@ public class QueryBuilder {
        query.delete(query.length() - 1, query.length());
        query.append(");");
        return query.toString();
-    }
+   }
+
+   public static String read(IDTO object) {
+       StringBuilder query = new StringBuilder();
+       Map<String, Map<Object, Object>> objectData = DTOParser.getDTOData(object);
+
+       query.append("SELECT * FROM ")
+               .append(DTOParser.tableName(object))
+               .append(" WHERE ");
+       objectData.forEach((key,value) -> {
+           query.append(key);
+           value.forEach((k,v) -> {
+               query.append(" = ");
+               query.append(v);
+               query.append(", ");
+           });
+       });
+       query.delete(query.length() - 2, query.length());
+       System.out.println("QUERY " + query);
+       return query.toString();
+   }
 
     public static void replacePlaceholders(PreparedStatement statement, Map<String, Map<Object, Object>> objectData)
             throws SQLException, NoSuchFieldException, IllegalAccessException {
-       int counter = 0;
+       int counter = 1;
         for (Map.Entry<String, Map<Object, Object>> data: objectData.entrySet()) {
             setType(statement, data.getValue().entrySet(), counter++);
         }
@@ -40,17 +60,12 @@ public class QueryBuilder {
     public static void  setType(PreparedStatement statement, Set<Map.Entry<Object, Object>> dataSet, int index)
             throws SQLException, NoSuchFieldException, IllegalAccessException {
         Map.Entry<Object, Object> data = dataSet.stream().findFirst().get();
-        //TODO Fix it to check if the key class matches with some built in class type
-        System.out.println(data.getKey().getClass().getTypeName());
-        if (data.getKey().getClass().equals(String.class)) {
-            statement.setString(index, (String) data.getValue());
-        } else if (data.getKey().getClass().equals(Double.class)) {
-            statement.setDouble(index, (Double) data.getValue());
-        } else if (data.getKey().getClass().equals(Date.class)) {
-            statement.setDate(index, (Date) data.getValue());
-        } else {
-            //TODO: check the id in the category object (probably subquery will be needed)
-//            statement.setInt(index, data.getValue().getClass().getDeclaredField("id").getInt(data.getValue()));
+
+        switch (data.getKey().toString()) {
+            case "java.lang.String" -> statement.setString(index, (String) data.getValue());
+            case "java.lang.Double" -> statement.setDouble(index, (Double) data.getValue());
+            case "java.sql.Date" -> statement.setDate(index, (Date) data.getValue());
+            default -> statement.setInt(index, data.getValue().getClass().getDeclaredField("id").getInt(data.getValue()));
         }
     }
 }

@@ -16,7 +16,10 @@ public class EntryPoint {
         CategoryDTO categoryDTO = new CategoryDTO("food");
         ExpenseDTO expenseDTO = new ExpenseDTO("burger", 2000.0, new Date(Calendar.getInstance().getTimeInMillis()), categoryDTO);
 
-        new Service().get(1, DTOParser.tableName(categoryDTO));
+        Service service = new Service();
+        CategoryDTO categoryDTO1 = (CategoryDTO) service.get(1, DTOParser.tableName(categoryDTO));
+        System.out.println(categoryDTO1.getId());
+        System.out.println(categoryDTO1.getName());
 
     }
 }

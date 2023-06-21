@@ -1,7 +1,10 @@
 package org.example.utils;
 
+import org.example.model.dto.IDTO;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -9,10 +12,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ObjectBuilder {
-    public static Class<?> setValues(ResultSet data, String table) throws SQLException, ClassNotFoundException {
+    public static IDTO setValues(ResultSet data, String table) throws SQLException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         table = makeSingular(table);
         String className = getClassName(table);
-        Class<?> object = Class.forName("org.example.model.dto.".concat(className));
+        Class<?> targetClass = Class.forName("org.example.model.dto.".concat(className));
+        IDTO object = (IDTO) targetClass.getConstructor().newInstance();
         Map<String, Map<Object, Object>> attributes = getAttributes(data);
 
         for (Map.Entry<String,Map<Object, Object>> attribute : attributes.entrySet()) {
@@ -22,26 +26,39 @@ public class ObjectBuilder {
         return object;
     }
 
-    private static void invokeSetter(Class<?> object, String setter,
+    private static void invokeSetter(IDTO object, String setter,
                                      Map.Entry<String, Map<Object, Object>> attribute) {
         try {
             Map.Entry<Object, Object> row = attribute.getValue().entrySet().stream().findFirst().get();
-            System.out.println("Class " + row.getKey());
-            Class<?> argumentType = Class.forName(row.getKey().toString()
-                            .split("(!?class)")[1].trim());
-            Method method = object.getMethod(setter, argumentType);
 
-            method.invoke(object, cast(row.getValue()));
+            Method method;
+            switch (row.getValue().getClass().getTypeName()) {
+                case "java.lang.Integer" -> {
+                    method = object.getClass().getMethod(setter, Integer.class);
+                    System.out.println(Integer.valueOf((row.getValue().toString())) + " type: " + Integer.valueOf((row.getValue().toString())).getClass().getTypeName());
+                    method.invoke(object, Integer.valueOf((row.getValue().toString())));
+                }
+                case "java.lang.String" -> {
+                    method = object.getClass().getMethod(setter, String.class);
+                    method.invoke(object, String.valueOf(row.getValue()));
+                }
+                case "java.sql.Date" -> {
+                    method = object.getClass().getMethod(setter, Date.class);
+                    method.invoke(object, Date.valueOf((String) row.getValue()));
+                }
+                default -> throw new ClassCastException(row.getValue().getClass().getTypeName() + " couldn't be cast");
+            }
 
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | ClassNotFoundException e) {
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             throw new RuntimeException(e);
+
         }
     }
     private static Map<String, Map<Object, Object>> getAttributes(ResultSet data) throws SQLException, ClassNotFoundException {
         ResultSetMetaData metaData = data.getMetaData();
         Map<String, Map<Object, Object>> attributes = new HashMap<>();
         data.next();
-        for (int i = 1; i < metaData.getColumnCount(); i++) {
+        for (int i = 1; i < metaData.getColumnCount() + 1; i++) {
             Object type = Class.forName(parseSQLTypes(metaData.getColumnTypeName(i)));
 
             String identifier = metaData.getColumnName(i);
@@ -78,10 +95,4 @@ public class ObjectBuilder {
             default -> throw new SQLException("Type: " + type + " not found");
         };
     }
-
-    public static <T> T cast(Object value) {
-        return (T) value;
-    }
-
-    // TODO: SOLVED CAST ISSUE TO BE ABLE TO INVOKE SETTERS
 }

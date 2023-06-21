@@ -7,6 +7,7 @@ import org.example.utils.DTOParser;
 import org.example.utils.ObjectBuilder;
 import org.example.utils.QueryBuilder;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.*;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +36,7 @@ public class Service implements IService {
     }
 
     @Override
-    public Class<?> get(Integer id, String table) {
+    public IDTO get(Integer id, String table) {
         try {
             query = new StringBuilder();
             query.append("SELECT * FROM ")
@@ -45,7 +46,8 @@ public class Service implements IService {
             ResultSet result = connection.createStatement().executeQuery(query.toString());
             return ObjectBuilder.setValues(result, table);
 
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException | ClassNotFoundException | InvocationTargetException | NoSuchMethodException |
+                 InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }

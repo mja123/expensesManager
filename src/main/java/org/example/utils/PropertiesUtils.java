@@ -1,13 +1,11 @@
 package org.example.utils;
 
 
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 
-public class Utils {
+public class PropertiesUtils {
     private static final Properties properties;
     private static final String path;
 

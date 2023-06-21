@@ -2,11 +2,10 @@ package org.example;
 
 
 import java.sql.Connection;
-import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import static org.example.utils.Utils.getProperty;
+import static org.example.utils.PropertiesUtils.getProperty;
 
 public class DBConnection {
     private static Connection INSTANCE;

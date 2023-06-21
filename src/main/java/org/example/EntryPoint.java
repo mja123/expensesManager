@@ -35,7 +35,6 @@ public class EntryPoint {
 //        System.out.println(categoryDTO1.getId());
 //        System.out.println(categoryDTO1.getName());
 //        List<IDTO> categories = service.getAll(DTOParser.tableName(categoryDTO));
-
 //        List<CategoryDTO> categoriesDTO = new ArrayList<>();
 //        categories.forEach(c -> categoriesDTO.add((CategoryDTO) c));
 //        categoriesDTO.forEach(c -> {
@@ -43,10 +42,20 @@ public class EntryPoint {
 //            System.out.println(c.getId());
 //        });
 
-        List<IDTO> expenses = service.getAll(DTOParser.tableName(expenseDTO));
-        List<ExpenseDTO> expensesDTO = new ArrayList<>();
-        expenses.forEach(c -> expensesDTO.add((ExpenseDTO) c));
-        expensesDTO.forEach(c -> {
+//        List<IDTO> expenses = service.getAll(DTOParser.tableName(expenseDTO));
+//        List<ExpenseDTO> expensesDTO = new ArrayList<>();
+//        expenses.forEach(c -> expensesDTO.add((ExpenseDTO) c));
+//        expensesDTO.forEach(c -> {
+//            System.out.println(c.getName());
+//            System.out.println(c.getId());
+//            System.out.println(c.getAmount());
+//            System.out.println(c.getDate());
+//            System.out.println(c.getCategory());
+//
+//        });
+
+        List<ExpenseDTO> expensesDTOCategory = service.getAllFromCategory(1);
+        expensesDTOCategory.forEach(c -> {
             System.out.println(c.getName());
             System.out.println(c.getId());
             System.out.println(c.getAmount());

@@ -1,5 +1,6 @@
 package org.example.model;
 
+import org.example.model.dto.ExpenseDTO;
 import org.example.model.dto.IDTO;
 
 import java.util.List;
@@ -9,4 +10,5 @@ public interface IService {
     IDTO get(Integer id, String table);
     List<IDTO> getAll(String table);
     void delete(Integer id, String table);
+    List<ExpenseDTO> getAllFromCategory(Integer categoryId);
 }

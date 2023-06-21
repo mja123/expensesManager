@@ -2,6 +2,7 @@ package org.example.model;
 
 import org.example.DBConnection;
 import org.example.model.dto.CategoryDTO;
+import org.example.model.dto.ExpenseDTO;
 import org.example.model.dto.IDTO;
 import org.example.utils.DTOParser;
 import org.example.utils.ObjectBuilder;
@@ -9,6 +10,7 @@ import org.example.utils.QueryBuilder;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -87,4 +89,22 @@ public class Service implements IService {
             throw new RuntimeException(e);
         }
     }
+    @Override
+    public List<ExpenseDTO> getAllFromCategory(Integer categoryId) {
+        try {
+            query = new StringBuilder();
+            query.append("SELECT * FROM expenses WHERE category = ")
+                    .append(categoryId)
+                    .append(";");
+            ResultSet result = connection.createStatement().executeQuery(query.toString());
+            List<IDTO> rawDTO = ObjectBuilder.setObjects(result, "expenses");
+            List<ExpenseDTO> expensesDTO = new ArrayList<>();
+            rawDTO.forEach(r -> expensesDTO.add((ExpenseDTO) r));
+            return expensesDTO;
+        } catch (SQLException | ClassNotFoundException | InvocationTargetException | NoSuchMethodException |
+                 InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

@@ -8,7 +8,10 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ObjectBuilder {
@@ -25,6 +28,7 @@ public class ObjectBuilder {
         }
         return object;
     }
+
 
     private static void invokeSetter(IDTO object, String setter,
                                      Map.Entry<String, Map<Object, Object>> attribute) {
@@ -44,7 +48,12 @@ public class ObjectBuilder {
                 }
                 case "java.sql.Date" -> {
                     method = object.getClass().getMethod(setter, Date.class);
-                    method.invoke(object, Date.valueOf((String) row.getValue()));
+                    SimpleDateFormat dataFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    method.invoke(object, Date.valueOf(dataFormat.format(row.getValue())));
+                }
+                case "java.lang.Double" -> {
+                    method = object.getClass().getMethod(setter, Double.class);
+                    method.invoke(object, Double.parseDouble(row.getValue().toString()));
                 }
                 default -> throw new ClassCastException(row.getValue().getClass().getTypeName() + " couldn't be cast");
             }
@@ -57,7 +66,7 @@ public class ObjectBuilder {
     private static Map<String, Map<Object, Object>> getAttributes(ResultSet data) throws SQLException, ClassNotFoundException {
         ResultSetMetaData metaData = data.getMetaData();
         Map<String, Map<Object, Object>> attributes = new HashMap<>();
-        data.next();
+        if (data.isBeforeFirst()) data.next();
         for (int i = 1; i < metaData.getColumnCount() + 1; i++) {
             Object type = Class.forName(parseSQLTypes(metaData.getColumnTypeName(i)));
 
@@ -84,7 +93,7 @@ public class ObjectBuilder {
         return switch (suffix) {
             case "ies" -> table.substring(0, table.length() - 3).concat("y");
             case ".(!?e)s" -> table;
-            default -> table.substring(0, table.length() - 2);
+            default -> table.substring(0, table.length() - 1);
         };
     }
 
@@ -92,7 +101,27 @@ public class ObjectBuilder {
         return switch (type) {
             case "INT" -> "java.lang.Integer";
             case "VARCHAR" -> "java.lang.String";
+            case "DOUBLE" -> "java.lang.Double";
+            case "DATE" -> "java.sql.Date";
             default -> throw new SQLException("Type: " + type + " not found");
         };
+    }
+
+    public static List<IDTO> setObjects(ResultSet data, String table) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, SQLException {
+        table = makeSingular(table);
+        String className = getClassName(table);
+        Class<?> targetClass = Class.forName("org.example.model.dto.".concat(className));
+        List<IDTO> records = new ArrayList<>();
+        while (data.next()){
+            IDTO object = (IDTO) targetClass.getConstructor().newInstance();
+            Map<String, Map<Object, Object>> attributes = getAttributes(data);
+
+            for (Map.Entry<String,Map<Object, Object>> attribute : attributes.entrySet()) {
+                String setter = makeSetter(attribute.getKey());
+                invokeSetter(object, setter, attribute);
+            }
+            records.add(object);
+        }
+        return records;
     }
 }

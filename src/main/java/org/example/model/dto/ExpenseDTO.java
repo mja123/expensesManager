@@ -7,19 +7,19 @@ public class ExpenseDTO implements IDTO {
     private String name;
     private Double amount;
     private Date date;
-    private CategoryDTO category;
+    private Integer category;
 
     public ExpenseDTO() {
     }
 
-    public ExpenseDTO(String name, Double amount, Date date, CategoryDTO category) {
+    public ExpenseDTO(String name, Double amount, Date date, Integer category) {
         this.name = name;
         this.amount = amount;
         this.date = date;
         this.category = category;
     }
 
-    public ExpenseDTO(Integer id, String name, Double amount, Date date, CategoryDTO category) {
+    public ExpenseDTO(Integer id, String name, Double amount, Date date, Integer category) {
         this.id = id;
         this.name = name;
         this.amount = amount;
@@ -59,11 +59,11 @@ public class ExpenseDTO implements IDTO {
         this.date = date;
     }
 
-    public CategoryDTO getCategory() {
+    public Integer getCategory() {
         return category;
     }
 
-    public void setCategory(CategoryDTO category) {
+    public void setCategory(Integer category) {
         this.category = category;
     }
 }

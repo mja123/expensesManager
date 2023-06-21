@@ -26,9 +26,10 @@ public class Service implements IService {
         query = new StringBuilder();
         try {
             Map<String, Map<Object, Object>> data = DTOParser.getDTOData(object);
-            statement = connection.prepareStatement(QueryBuilder.create(object));
+            statement = connection.prepareStatement(QueryBuilder.create(object, data));
             QueryBuilder.replacePlaceholders(statement, data);
-            if (statement.executeUpdate() < 1) throw new SQLException("Record wasn't created");
+            System.out.println(statement.toString());
+            if (statement.executeUpdate() == 0) throw new SQLException("Record wasn't created");
         } catch (SQLException | NoSuchFieldException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
@@ -42,7 +43,8 @@ public class Service implements IService {
             query.append("SELECT * FROM ")
                     .append(table)
                     .append(" WHERE id = ")
-                    .append(id);
+                    .append(id)
+                    .append(";");
             ResultSet result = connection.createStatement().executeQuery(query.toString());
             return ObjectBuilder.setValues(result, table);
 
@@ -53,17 +55,36 @@ public class Service implements IService {
     }
 
     @Override
-    public List<IDTO> getAll() {
-        return null;
+    public List<IDTO> getAll(String table) {
+        try {
+            query = new StringBuilder();
+            query.append("SELECT * FROM ")
+                    .append(table)
+                    .append(";");
+            ResultSet result = connection.createStatement().executeQuery(query.toString());
+            return ObjectBuilder.setObjects(result, table);
+        } catch (SQLException | ClassNotFoundException | InvocationTargetException | NoSuchMethodException |
+                 InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     @Override
-    public IDTO modify(IDTO object) {
-        return null;
-    }
+    public void delete(Integer id, String table) {
+        try {
+            query = new StringBuilder();
+            query.append("DELETE FROM ")
+                    .append(table)
+                    .append(" WHERE id = ")
+                    .append(id)
+                    .append(";");
 
-    @Override
-    public Integer delete(IDTO object) {
-        return null;
+            if (connection.createStatement().executeUpdate(query.toString()) == 0)
+                throw new SQLException("We couldn't delete record with id: " + id);
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

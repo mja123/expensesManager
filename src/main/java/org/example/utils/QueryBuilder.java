@@ -9,9 +9,8 @@ import java.util.Map;
 import java.util.Set;
 
 public class QueryBuilder {
-   public static String create(IDTO object) {
+   public static String create(IDTO object, Map<String, Map<Object, Object>> objectData) {
        StringBuilder query = new StringBuilder();
-       Map<String, Map<Object, Object>> objectData = DTOParser.getDTOData(object);
 
        query.append("INSERT INTO ")
                .append(DTOParser.tableName(object))
@@ -23,29 +22,9 @@ public class QueryBuilder {
        query.append(")")
                .append(" VALUES")
                .append("(");
-       query.append("? ".repeat(objectData.size()));
-       query.delete(query.length() - 1, query.length());
-       query.append(");");
-       return query.toString();
-   }
-
-   public static String read(IDTO object) {
-       StringBuilder query = new StringBuilder();
-       Map<String, Map<Object, Object>> objectData = DTOParser.getDTOData(object);
-
-       query.append("SELECT * FROM ")
-               .append(DTOParser.tableName(object))
-               .append(" WHERE ");
-       objectData.forEach((key,value) -> {
-           query.append(key);
-           value.forEach((k,v) -> {
-               query.append(" = ");
-               query.append(v);
-               query.append(", ");
-           });
-       });
+       query.append("?, ".repeat(objectData.size()));
        query.delete(query.length() - 2, query.length());
-       System.out.println("QUERY " + query);
+       query.append(");");
        return query.toString();
    }
 
@@ -65,6 +44,7 @@ public class QueryBuilder {
             case "java.lang.String" -> statement.setString(index, (String) data.getValue());
             case "java.lang.Double" -> statement.setDouble(index, (Double) data.getValue());
             case "java.sql.Date" -> statement.setDate(index, (Date) data.getValue());
+            case "java.lang.Integer" -> statement.setInt(index, (Integer) data.getValue());
             default -> statement.setInt(index, data.getValue().getClass().getDeclaredField("id").getInt(data.getValue()));
         }
     }

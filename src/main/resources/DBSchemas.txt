@@ -1,0 +1,22 @@
+CREATE TABLE `expensesDB`.`categories` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(60) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
+  UNIQUE INDEX `name_UNIQUE` (`name` ASC) VISIBLE);
+
+
+CREATE TABLE `expensesDB`.`expenses` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(60) NOT NULL,
+  `amount` DOUBLE NOT NULL,
+  `date` DATE NOT NULL,
+  `category` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
+  INDEX `category_idx` (`category` ASC) VISIBLE,
+  CONSTRAINT `id`
+    FOREIGN KEY (`category`)
+    REFERENCES `expensesDB`.`categories` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);

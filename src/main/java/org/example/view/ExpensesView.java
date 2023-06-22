@@ -1,16 +1,18 @@
 package org.example.view;
 
-import jdk.jfr.Category;
 import org.example.model.Service;
+import org.example.model.dto.CategoryDTO;
 import org.example.model.dto.ExpenseDTO;
 
 import javax.swing.*;
 import java.awt.*;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 public class ExpensesView extends View {
-    private final Service service = new Service();
+    private static final Service service = new Service();
     private static final JTextField nameField = nameField();
     private static final JTextField amountField = amountField();
     private static final JComboBox<String> categoryField = categoryField();
@@ -34,9 +36,7 @@ public class ExpensesView extends View {
     private static class CreateButton extends JButton {
         CreateButton() {
             super("Create");
-            this.addActionListener(event -> {
-                createNewExpense();
-            });
+            this.addActionListener(event -> createNewExpense());
         }
 
         private void createNewExpense() {
@@ -46,132 +46,41 @@ public class ExpensesView extends View {
                     new Date(Calendar.getInstance().getTimeInMillis()),
                     categoryField.getSelectedIndex()
             );
-            System.out.println(expenseDTO.getCategory());
+            service.create(expenseDTO);
         }
     }
 
     private static class ExpensesList extends JPanel {
         ExpensesList() {
-            Object[][] rowData = {
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-                    {1, "stefa", 200.2, "date", 'A'},
-            };
-            String[] columns = {"ID", "NAME", "AMOUNT", "DATE", "CATEGORY"};
-            this.setLayout(new BorderLayout());
-            this.add(new JScrollPane(new JTable(rowData, columns)), BorderLayout.CENTER);
+            Object[] columns = { "ID", "NAME", "AMOUNT", "DATE", "CATEGORY" };
+            setLayout(new BorderLayout());
+            add(new JScrollPane(new JTable(/* rows , columns */)));
         }
     }
-
     private static class NewExpenseForm extends JPanel {
         NewExpenseForm() {
-            this.add(nameField);
-            this.add(amountField);
-            this.add(categoryField);
+            add(nameField);
+            add(amountField);
+            add(categoryField);
         }
     }
 
     private static JTextField nameField() {
-
-        return new JTextField(20);
+        return new JTextField(40);
     }
 
     private static JTextField amountField() {
-
-        return new JTextField(20);
+        return new JTextField(25);
     }
 
     private static JComboBox<String> categoryField() {
-        String[] categories = { "a", "b", "c", "d" };
+        JComboBox<String> categoryField = new JComboBox<>();
+        List<CategoryDTO> categoriesDTO = new ArrayList<>();
 
-        return new JComboBox<>(categories);
+        service.getAll("categories").forEach(c -> categoriesDTO.add((CategoryDTO) c));
+        categoriesDTO.forEach(c -> categoryField.addItem(c.getName()));
+
+        return categoryField;
     }
 }
+

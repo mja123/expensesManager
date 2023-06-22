@@ -6,6 +6,7 @@ import org.example.model.dto.IDTO;
 import org.example.utils.DTOParser;
 import org.example.model.dto.CategoryDTO;
 import org.example.model.dto.ExpenseDTO;
+import org.example.view.ExpensesView;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Date;
@@ -15,11 +16,10 @@ import java.util.List;
 
 public class EntryPoint {
     public static void main(String[] args) {
-        System.out.println(DBConnection.getConnection());
-        CategoryDTO categoryDTO = new CategoryDTO("transport");
-        ExpenseDTO expenseDTO = new ExpenseDTO("burger", 3000.0, new Date(Calendar.getInstance().getTimeInMillis()), 1);
+        new ExpensesView();
 
-        Service service = new Service();
+        //CategoryDTO categoryDTO = new CategoryDTO("transport");
+
 //        service.create(expenseDTO);
 //        service.create(categoryDTO);
 //
@@ -54,15 +54,15 @@ public class EntryPoint {
 //
 //        });
 
-        List<ExpenseDTO> expensesDTOCategory = service.getAllFromCategory(1);
-        expensesDTOCategory.forEach(c -> {
+        //List<ExpenseDTO> expensesDTOCategory = service.getAllFromCategory(1);
+        /*expensesDTOCategory.forEach(c -> {
             System.out.println(c.getName());
             System.out.println(c.getId());
             System.out.println(c.getAmount());
             System.out.println(c.getDate());
             System.out.println(c.getCategory());
 
-        });
+        }); */
 
 //        service.delete(4, DTOParser.tableName(categoryDTO));
     }

@@ -53,8 +53,19 @@ public class ExpensesView extends View {
     private static class ExpensesList extends JPanel {
         ExpensesList() {
             Object[] columns = { "ID", "NAME", "AMOUNT", "DATE", "CATEGORY" };
+            Object[][] rows = {
+                    {1, "stefa", 11.11, new Date(System.currentTimeMillis()), "Race"},
+                    {1, "stefa", 11.11, new Date(System.currentTimeMillis()), "Race"},
+                    {1, "stefa", 11.11, new Date(System.currentTimeMillis()), "Race"},
+                    {1, "stefa", 11.11, new Date(System.currentTimeMillis()), "Race"},
+                    {1, "stefa", 11.11, new Date(System.currentTimeMillis()), "Race"},
+                    {1, "stefa", 11.11, new Date(System.currentTimeMillis()), "Race"},
+                    {1, "stefa", 11.11, new Date(System.currentTimeMillis()), "Race"},
+                    {1, "stefa", 11.11, new Date(System.currentTimeMillis()), "Race"},
+                    {1, "stefa", 11.11, new Date(System.currentTimeMillis()), "Race"},
+            };
             setLayout(new BorderLayout());
-            add(new JScrollPane(new JTable(/* rows , columns */)));
+            add(new JScrollPane(new JTable(rows, columns)));
         }
     }
     private static class NewExpenseForm extends JPanel {

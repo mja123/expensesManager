@@ -1,6 +1,7 @@
 package org.example.utils;
 
 import org.example.model.dto.IDTO;
+import org.example.utils.enums.ETable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -34,7 +35,7 @@ public class DTOParser {
         return values;
     }
 
-    static public String tableName(IDTO object) {
+    static public String getTableName(IDTO object) {
         String[] splitClassName = object.getClass().getName().split("\\.");
         return makePlural(splitClassName[splitClassName.length -1].split("(!?DTO)")[0].toLowerCase());
     }

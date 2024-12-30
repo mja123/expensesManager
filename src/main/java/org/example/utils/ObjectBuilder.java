@@ -73,6 +73,7 @@ public class ObjectBuilder {
             String identifier = metaData.getColumnName(i);
             int columnIndex = data.findColumn(identifier);
             Object value = data.getObject(columnIndex);
+            System.out.println(value);
             attributes.put(identifier, Map.of(type, value));
         }
         return attributes;

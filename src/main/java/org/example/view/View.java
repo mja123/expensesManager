@@ -13,6 +13,6 @@ public abstract class View extends JFrame {
 
     private void setSize() {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        this.setSize((int) (screenSize.width / 1.3), (int) (screenSize.height / 1.3));
+        this.setSize((int) (screenSize.width / 1.5), (int) (screenSize.height / 1.5));
     }
 }

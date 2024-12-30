@@ -25,3 +25,9 @@ public class EntryPoint {
 //        System.out.println(categoryDTO1.getName());
     }
 }
+
+/*
+TODO:
+- Service should return ResultSet, controller must transform in objects
+- Add correct logic to Delete button
+ */

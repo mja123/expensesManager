@@ -1,12 +1,12 @@
 package org.example.model;
 
 import org.example.DBConnection;
-import org.example.model.dto.CategoryDTO;
 import org.example.model.dto.ExpenseDTO;
 import org.example.model.dto.IDTO;
 import org.example.utils.DTOParser;
 import org.example.utils.ObjectBuilder;
 import org.example.utils.QueryBuilder;
+import org.example.utils.enums.ETable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.*;
@@ -16,7 +16,6 @@ import java.util.Map;
 
 public class Service implements IService {
     private final Connection connection;
-    private PreparedStatement statement;
     private StringBuilder query;
     public Service() {
         this.connection = DBConnection.getConnection();
@@ -28,43 +27,24 @@ public class Service implements IService {
         query = new StringBuilder();
         try {
             Map<String, Map<Object, Object>> data = DTOParser.getDTOData(object);
-            statement = connection.prepareStatement(QueryBuilder.create(object, data));
+            PreparedStatement statement = connection.prepareStatement(QueryBuilder.create(object, data));
             QueryBuilder.replacePlaceholders(statement, data);
             System.out.println(statement.toString());
             if (statement.executeUpdate() == 0) throw new SQLException("Record wasn't created");
+            System.out.println(statement);
         } catch (SQLException | NoSuchFieldException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
         System.out.println(query);
     }
 
+
     @Override
-    public IDTO get(Integer id, String table) {
+    public IDTO get(String name, ETable table) {
         try {
             query = new StringBuilder();
             query.append("SELECT * FROM ")
-                    .append(table)
-                    .append(" WHERE id = ")
-                    .append(id)
-                    .append(";");
-            System.out.println(query);
-            ResultSet result = connection.createStatement().executeQuery(query.toString());
-            System.out.println("Result: " + result);
-            return ObjectBuilder.setValues(result, table);
-
-        } catch (SQLException | ClassNotFoundException | InvocationTargetException | NoSuchMethodException |
-                 InstantiationException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
-    @Override
-    public IDTO get(String name, String table) {
-        try {
-            query = new StringBuilder();
-            query.append("SELECT * FROM ")
-                    .append(table)
+                    .append(table.getTableName())
                     .append(" WHERE name = ")
                     .append("'")
                     .append(name)
@@ -73,7 +53,7 @@ public class Service implements IService {
             System.out.println(query);
             ResultSet result = connection.createStatement().executeQuery(query.toString());
             System.out.println("Result: " + result);
-            return ObjectBuilder.setValues(result, table);
+            return ObjectBuilder.setValues(result, table.getTableName());
 
         } catch (SQLException | ClassNotFoundException | InvocationTargetException | NoSuchMethodException |
                  InstantiationException | IllegalAccessException e) {
@@ -82,14 +62,14 @@ public class Service implements IService {
     }
 
     @Override
-    public List<IDTO> getAll(String table) {
+    public List<IDTO> getAll(ETable table) {
         try {
             query = new StringBuilder();
             query.append("SELECT * FROM ")
-                    .append(table)
+                    .append(table.getTableName())
                     .append(";");
             ResultSet result = connection.createStatement().executeQuery(query.toString());
-            return ObjectBuilder.setObjects(result, table);
+            return ObjectBuilder.setObjects(result, table.getTableName());
         } catch (SQLException | ClassNotFoundException | InvocationTargetException | NoSuchMethodException |
                  InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);
@@ -98,11 +78,11 @@ public class Service implements IService {
     }
 
     @Override
-    public void delete(Integer id, String table) {
+    public void delete(Integer id, ETable table) {
         try {
             query = new StringBuilder();
             query.append("DELETE FROM ")
-                    .append(table)
+                    .append(table.getTableName())
                     .append(" WHERE id = ")
                     .append(id)
                     .append(";");

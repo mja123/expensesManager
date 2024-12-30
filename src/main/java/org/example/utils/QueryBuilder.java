@@ -13,7 +13,7 @@ public class QueryBuilder {
        StringBuilder query = new StringBuilder();
 
        query.append("INSERT INTO ")
-               .append(DTOParser.tableName(object))
+               .append(DTOParser.getTableName(object))
                .append("(");
        objectData.forEach((key, value) -> query
                .append(key)

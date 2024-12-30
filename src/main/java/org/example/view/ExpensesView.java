@@ -1,6 +1,7 @@
 package org.example.view;
 
 import org.example.model.Service;
+import org.example.model.controller.Controller;
 import org.example.model.dto.CategoryDTO;
 import org.example.model.dto.ExpenseDTO;
 
@@ -13,6 +14,7 @@ import java.util.List;
 
 public class ExpensesView extends View {
     private static final Service service = new Service();
+    private static final Controller controller = new Controller();
     private static final JTextField nameField = nameField();
     private static final JTextField amountField = amountField();
     private static final JComboBox<String> categoryField = categoryField();
@@ -44,26 +46,17 @@ public class ExpensesView extends View {
                     nameField.getText(),
                     Double.parseDouble(amountField.getText()),
                     new Date(Calendar.getInstance().getTimeInMillis()),
-                    categoryField.getSelectedIndex()
+                    (String) categoryField.getSelectedItem()
             );
-            service.create(expenseDTO);
+//            service.create(expenseDTO);
+            controller.create(expenseDTO);
         }
     }
 
     private static class ExpensesList extends JPanel {
         ExpensesList() {
             Object[] columns = { "ID", "NAME", "AMOUNT", "DATE", "CATEGORY" };
-            Object[][] rows = {
-                    {1, "stefa", 11.11, new Date(System.currentTimeMillis()), "Race"},
-                    {1, "stefa", 11.11, new Date(System.currentTimeMillis()), "Race"},
-                    {1, "stefa", 11.11, new Date(System.currentTimeMillis()), "Race"},
-                    {1, "stefa", 11.11, new Date(System.currentTimeMillis()), "Race"},
-                    {1, "stefa", 11.11, new Date(System.currentTimeMillis()), "Race"},
-                    {1, "stefa", 11.11, new Date(System.currentTimeMillis()), "Race"},
-                    {1, "stefa", 11.11, new Date(System.currentTimeMillis()), "Race"},
-                    {1, "stefa", 11.11, new Date(System.currentTimeMillis()), "Race"},
-                    {1, "stefa", 11.11, new Date(System.currentTimeMillis()), "Race"},
-            };
+            Object[][] rows = {};
             setLayout(new BorderLayout());
             add(new JScrollPane(new JTable(rows, columns)));
         }
@@ -95,3 +88,7 @@ public class ExpensesView extends View {
     }
 }
 
+/* TODO:
+- Implement all methods from IService
+-
+ */

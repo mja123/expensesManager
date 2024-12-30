@@ -47,7 +47,32 @@ public class Service implements IService {
                     .append(" WHERE id = ")
                     .append(id)
                     .append(";");
+            System.out.println(query);
             ResultSet result = connection.createStatement().executeQuery(query.toString());
+            System.out.println("Result: " + result);
+            return ObjectBuilder.setValues(result, table);
+
+        } catch (SQLException | ClassNotFoundException | InvocationTargetException | NoSuchMethodException |
+                 InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    @Override
+    public IDTO get(String name, String table) {
+        try {
+            query = new StringBuilder();
+            query.append("SELECT * FROM ")
+                    .append(table)
+                    .append(" WHERE name = ")
+                    .append("'")
+                    .append(name)
+                    .append("'")
+                    .append(";");
+            System.out.println(query);
+            ResultSet result = connection.createStatement().executeQuery(query.toString());
+            System.out.println("Result: " + result);
             return ObjectBuilder.setValues(result, table);
 
         } catch (SQLException | ClassNotFoundException | InvocationTargetException | NoSuchMethodException |

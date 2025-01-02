@@ -63,24 +63,24 @@ public class ExpensesView extends JFrame {
         }
 
         private void deleteExpense() {
-            ExpenseDTO expenseDTO = new ExpenseDTO(
-                    nameField.getText(),
-                    Double.parseDouble(amountField.getText()),
-                    new Date(Calendar.getInstance().getTimeInMillis()),
-                    (String) categoryField.getSelectedItem()
-            );
-            controller.create(expenseDTO);
+            JTable expensesTable = ExpensesList.getExpensesTable();
+            int selectRow = expensesTable.getSelectedRow();
+            int expenseId = (int) expensesTable.getValueAt(selectRow, 0);
+            controller.delete(expenseId, ETable.EXPENSE);
+            ExpensesList.deleteRow(selectRow);
         }
     }
     private static class ExpensesList extends JPanel {
         private static DefaultTableModel defaultTableModel;
+        private static JTable expensesTable;
         ExpensesList() {
             Object[] columns = { "ID", "NAME", "AMOUNT", "DATE", "CATEGORY" };
             Object[][] rows = {};
             defaultTableModel = new DefaultTableModel(rows, columns);
             fillExpensesTable();
             setLayout(new BorderLayout());
-            add(new JScrollPane(new JTable(defaultTableModel)));
+            expensesTable = new JTable(defaultTableModel);
+            add(new JScrollPane(expensesTable));
         }
 
         private static void fillExpensesTable() {
@@ -89,6 +89,14 @@ public class ExpensesView extends JFrame {
 
         public static void addRow(ExpenseDTO expense) {
             defaultTableModel.addRow(new Object[] {expense.getId(), expense.getName(), expense.getAmount(), expense.getDate(), expense.getCategory()});
+        }
+
+        public static void deleteRow(int rowNumber) {
+            defaultTableModel.removeRow(rowNumber);
+        }
+
+        public static JTable getExpensesTable() {
+            return expensesTable;
         }
     }
     private static class NewExpenseForm extends JPanel {

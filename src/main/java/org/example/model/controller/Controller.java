@@ -21,9 +21,14 @@ public class Controller {
     }
 
     public void create(IDTO dtoObject) {
-        service.create(dtoObject);
-        ResultSet expenseCrated = service.get(dtoObject.getName(), ETable.fromValue(DTOParser.getTableName(dtoObject)));
-        dtoObject.setId(getDTOFromResultSet(expenseCrated, ETable.EXPENSE).getId());
+        try {
+            service.create(dtoObject);
+            ResultSet expenseCrated = service.get(dtoObject.getName(), ETable.fromValue(DTOParser.getTableName(dtoObject)));
+            expenseCrated.last();
+            dtoObject.setId(getDTOFromResultSet(expenseCrated, ETable.EXPENSE).getId());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
     public List<IDTO> getAll(ETable table) {
         ResultSet getAllRecords = service.getAll(table);
@@ -35,6 +40,9 @@ public class Controller {
         }
     }
 
+    public void delete(int id, ETable table) {
+        service.delete(id, table);
+    }
     public static Integer getCategoryId(String name) {
         ResultSet category = service.get(name, ETable.CATEGORY);
         System.out.println("Result: " + category);

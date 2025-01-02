@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static java.sql.ResultSet.TYPE_SCROLL_INSENSITIVE;
+
 public class Service implements IService {
     private final Connection connection;
     private StringBuilder query;
@@ -51,7 +53,10 @@ public class Service implements IService {
                     .append("'")
                     .append(";");
             System.out.println(query);
-            return connection.createStatement().executeQuery(query.toString());
+            return connection.createStatement(
+                    ResultSet.TYPE_SCROLL_INSENSITIVE,
+                    ResultSet.CONCUR_READ_ONLY
+                    ).executeQuery(query.toString());
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

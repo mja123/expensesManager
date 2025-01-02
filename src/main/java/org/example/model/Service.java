@@ -40,7 +40,7 @@ public class Service implements IService {
 
 
     @Override
-    public IDTO get(String name, ETable table) {
+    public ResultSet get(String name, ETable table) {
         try {
             query = new StringBuilder();
             query.append("SELECT * FROM ")
@@ -51,30 +51,23 @@ public class Service implements IService {
                     .append("'")
                     .append(";");
             System.out.println(query);
-            ResultSet result = connection.createStatement().executeQuery(query.toString());
-            System.out.println("Result: " + result);
-            return ObjectBuilder.setValues(result, table.getTableName());
-
-        } catch (SQLException | ClassNotFoundException | InvocationTargetException | NoSuchMethodException |
-                 InstantiationException | IllegalAccessException e) {
+            return connection.createStatement().executeQuery(query.toString());
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public List<IDTO> getAll(ETable table) {
+    public ResultSet getAll(ETable table) {
         try {
             query = new StringBuilder();
             query.append("SELECT * FROM ")
                     .append(table.getTableName())
                     .append(";");
-            ResultSet result = connection.createStatement().executeQuery(query.toString());
-            return ObjectBuilder.setObjects(result, table.getTableName());
-        } catch (SQLException | ClassNotFoundException | InvocationTargetException | NoSuchMethodException |
-                 InstantiationException | IllegalAccessException e) {
+            return connection.createStatement().executeQuery(query.toString());
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     @Override
@@ -95,21 +88,15 @@ public class Service implements IService {
         }
     }
     @Override
-    public List<ExpenseDTO> getAllFromCategory(Integer categoryId) {
+    public ResultSet getAllFromCategory(Integer categoryId) {
         try {
             query = new StringBuilder();
             query.append("SELECT * FROM expenses WHERE category = ")
                     .append(categoryId)
                     .append(";");
-            ResultSet result = connection.createStatement().executeQuery(query.toString());
-            List<IDTO> rawDTO = ObjectBuilder.setObjects(result, "expenses");
-            List<ExpenseDTO> expensesDTO = new ArrayList<>();
-            rawDTO.forEach(r -> expensesDTO.add((ExpenseDTO) r));
-            return expensesDTO;
-        } catch (SQLException | ClassNotFoundException | InvocationTargetException | NoSuchMethodException |
-                 InstantiationException | IllegalAccessException e) {
+            return connection.createStatement().executeQuery(query.toString());
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
-
 }

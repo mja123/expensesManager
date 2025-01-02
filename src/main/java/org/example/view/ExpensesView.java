@@ -1,6 +1,5 @@
 package org.example.view;
 
-import org.example.model.Service;
 import org.example.model.controller.Controller;
 import org.example.model.dto.CategoryDTO;
 import org.example.model.dto.ExpenseDTO;
@@ -79,8 +78,13 @@ public class ExpensesView extends JFrame {
             Object[] columns = { "ID", "NAME", "AMOUNT", "DATE", "CATEGORY" };
             Object[][] rows = {};
             defaultTableModel = new DefaultTableModel(rows, columns);
+            fillExpensesTable();
             setLayout(new BorderLayout());
             add(new JScrollPane(new JTable(defaultTableModel)));
+        }
+
+        private static void fillExpensesTable() {
+            controller.getAll(ETable.EXPENSE).forEach(e -> addRow((ExpenseDTO) e));
         }
 
         public static void addRow(ExpenseDTO expense) {

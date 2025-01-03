@@ -28,6 +28,5 @@ public class EntryPoint {
 
 /*
 TODO:
-- Service should return ResultSet, controller must transform in objects
-- Add correct logic to Delete button
+- Add same functionality for categories
  */

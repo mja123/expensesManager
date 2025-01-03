@@ -1,4 +1,4 @@
-package org.example.model.controller;
+package org.example.controller;
 
 import org.example.model.Service;
 import org.example.model.dto.CategoryDTO;

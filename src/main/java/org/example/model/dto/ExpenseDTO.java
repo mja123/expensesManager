@@ -1,6 +1,6 @@
 package org.example.model.dto;
 
-import org.example.model.controller.Controller;
+import org.example.controller.Controller;
 
 import java.sql.Date;
 

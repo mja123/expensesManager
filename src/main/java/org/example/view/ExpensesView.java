@@ -1,6 +1,6 @@
 package org.example.view;
 
-import org.example.model.controller.Controller;
+import org.example.controller.Controller;
 import org.example.model.dto.CategoryDTO;
 import org.example.model.dto.ExpenseDTO;
 import org.example.utils.enums.ETable;
@@ -125,8 +125,3 @@ public class ExpensesView extends JFrame {
         return categoryField;
     }
 }
-
-/* TODO:
-- Implement all methods from IService
--
- */

@@ -1,13 +1,6 @@
 package org.example;
 
-import org.example.model.Service;
-import org.example.model.dto.CategoryDTO;
-import org.example.model.dto.ExpenseDTO;
-import org.example.utils.DTOParser;
-import org.example.view.ExpensesView;
-
-import java.sql.Date;
-import java.util.Calendar;
+import org.example.view.expenses.ExpensesView;
 
 public class EntryPoint {
     public static void main(String[] args) {
@@ -28,5 +21,7 @@ public class EntryPoint {
 
 /*
 TODO:
-- Add same functionality for categories
+- Refactor list classes to reuse code
+- Add category deletion feature
+- Pack panel after add new category (or figure out how we can avoid field displacement)
  */

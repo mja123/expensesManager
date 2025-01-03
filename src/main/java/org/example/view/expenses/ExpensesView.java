@@ -1,33 +1,34 @@
-package org.example.view;
+package org.example.view.expenses;
 
 import org.example.controller.Controller;
 import org.example.model.dto.CategoryDTO;
 import org.example.model.dto.ExpenseDTO;
 import org.example.utils.enums.ETable;
+import org.example.view.View;
+import org.example.view.categories.CategoryView;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class ExpensesView extends JFrame {
+public class ExpensesView extends View {
     private static final Controller controller = new Controller();
     private static final JTextField nameField = nameField();
     private static final JTextField amountField = amountField();
     private static final JComboBox<String> categoryField = categoryField();
+    private static Dimension screenDimension;
 
     public ExpensesView() {
-        super("Expenses");
+        super("Expenses", JFrame.EXIT_ON_CLOSE);
         this.setLayout(new BorderLayout());
         this.add(new NavBar(), BorderLayout.NORTH);
         this.add(new ExpensesList(), BorderLayout.CENTER);
         this.add(new NewExpenseForm(), BorderLayout.SOUTH);
         this.pack();
-        this.setVisible(true);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        screenDimension = new Dimension(this.getWidth(), this.getHeight());
     }
 
     private static class NavBar extends JPanel {
@@ -35,11 +36,12 @@ public class ExpensesView extends JFrame {
             this.setLayout(new FlowLayout(FlowLayout.CENTER));
             this.add(new CreateButton());
             this.add(new DeleteButton());
+            this.add(new CategoryButton());
         }
     }
 
     private static class CreateButton extends JButton {
-        CreateButton() {
+        public CreateButton() {
             super("Create");
             this.addActionListener(event -> createNewExpense());
         }
@@ -57,7 +59,7 @@ public class ExpensesView extends JFrame {
     }
 
     private static class DeleteButton extends JButton {
-        DeleteButton() {
+        public DeleteButton() {
             super("Delete");
             this.addActionListener(event -> deleteExpense());
         }
@@ -70,43 +72,33 @@ public class ExpensesView extends JFrame {
             ExpensesList.deleteRow(selectRow);
         }
     }
-    private static class ExpensesList extends JPanel {
-        private static DefaultTableModel defaultTableModel;
-        private static JTable expensesTable;
-        ExpensesList() {
-            Object[] columns = { "ID", "NAME", "AMOUNT", "DATE", "CATEGORY" };
-            Object[][] rows = {};
-            defaultTableModel = new DefaultTableModel(rows, columns);
-            fillExpensesTable();
-            setLayout(new BorderLayout());
-            expensesTable = new JTable(defaultTableModel);
-            add(new JScrollPane(expensesTable));
-        }
 
-        private static void fillExpensesTable() {
-            controller.getAll(ETable.EXPENSE).forEach(e -> addRow((ExpenseDTO) e));
+    private static class CategoryButton extends JButton {
+        public CategoryButton() {
+            super("Categories");
+            this.addActionListener(event -> goToCategoryView());
         }
-
-        public static void addRow(ExpenseDTO expense) {
-            defaultTableModel.addRow(new Object[] {expense.getId(), expense.getName(), expense.getAmount(), expense.getDate(), expense.getCategory()});
-        }
-
-        public static void deleteRow(int rowNumber) {
-            defaultTableModel.removeRow(rowNumber);
-        }
-
-        public static JTable getExpensesTable() {
-            return expensesTable;
+        private void goToCategoryView() {
+            new CategoryView(screenDimension);
         }
     }
     private static class NewExpenseForm extends JPanel {
         NewExpenseForm() {
+            add(new JLabel("Name"));
             add(nameField);
+            add(new JLabel("Amount"));
             add(amountField);
             add(categoryField);
         }
     }
 
+    public static void addCategory(String categoryName) {
+        categoryField.addItem(categoryName);
+    }
+
+    public static void deleteCategory(String categoryName) {
+        categoryField.removeItem(categoryName);
+    }
     private static JTextField nameField() {
         return new JTextField(40);
     }
@@ -116,8 +108,8 @@ public class ExpensesView extends JFrame {
     }
 
     private static JComboBox<String> categoryField() {
-        JComboBox<String> categoryField = new JComboBox<>();
         List<CategoryDTO> categoriesDTO = new ArrayList<>();
+        JComboBox<String> categoryField = new JComboBox<>();
 
         controller.getAll(ETable.CATEGORY).forEach(c -> categoriesDTO.add((CategoryDTO) c));
         categoriesDTO.forEach(c -> categoryField.addItem(c.getName()));

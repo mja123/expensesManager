@@ -2,7 +2,6 @@ package org.example.view.categories;
 
 import org.example.controller.Controller;
 import org.example.model.dto.CategoryDTO;
-import org.example.model.dto.ExpenseDTO;
 import org.example.utils.enums.ETable;
 
 import javax.swing.*;
@@ -35,7 +34,7 @@ public class CategoryList extends JPanel {
         defaultTableModel.removeRow(rowNumber);
     }
 
-    public static JTable getExpensesTable() {
+    public static JTable getCategoriesTable() {
         return expensesTable;
     }
 }

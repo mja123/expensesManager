@@ -24,19 +24,22 @@ public class ExpensesView extends View {
     public ExpensesView() {
         super("Expenses", JFrame.EXIT_ON_CLOSE);
         this.setLayout(new BorderLayout());
-        this.add(new NavBar(), BorderLayout.NORTH);
+        this.add(new NavBar(this), BorderLayout.NORTH);
         this.add(new ExpensesList(), BorderLayout.CENTER);
         this.add(new NewExpenseForm(), BorderLayout.SOUTH);
         this.pack();
         screenDimension = new Dimension(this.getWidth(), this.getHeight());
     }
 
+    public ExpensesView getThis() {
+        return this;
+    }
     private static class NavBar extends JPanel {
-        NavBar() {
+        NavBar(ExpensesView panel) {
             this.setLayout(new FlowLayout(FlowLayout.CENTER));
             this.add(new CreateButton());
             this.add(new DeleteButton());
-            this.add(new CategoryButton());
+            this.add(new CategoryButton(panel));
         }
     }
 
@@ -74,12 +77,12 @@ public class ExpensesView extends View {
     }
 
     private static class CategoryButton extends JButton {
-        public CategoryButton() {
+        public CategoryButton(ExpensesView panel) {
             super("Categories");
-            this.addActionListener(event -> goToCategoryView());
+            this.addActionListener(event -> goToCategoryView(panel));
         }
-        private void goToCategoryView() {
-            new CategoryView(screenDimension);
+        private void goToCategoryView(ExpensesView panel) {
+            new CategoryView(screenDimension, panel);
         }
     }
     private static class NewExpenseForm extends JPanel {
@@ -92,12 +95,14 @@ public class ExpensesView extends View {
         }
     }
 
-    public static void addCategory(String categoryName) {
+    public void addCategory(String categoryName) {
         categoryField.addItem(categoryName);
+        this.pack();
     }
 
-    public static void deleteCategory(String categoryName) {
+    public void deleteCategory(String categoryName) {
         categoryField.removeItem(categoryName);
+        this.pack();
     }
     private static JTextField nameField() {
         return new JTextField(40);

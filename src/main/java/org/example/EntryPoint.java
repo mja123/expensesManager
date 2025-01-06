@@ -22,6 +22,6 @@ public class EntryPoint {
 /*
 TODO:
 - Refactor list classes to reuse code
-- Add category deletion feature
-- Pack panel after add new category (or figure out how we can avoid field displacement)
+- Add exceptions
+- Add messages
  */

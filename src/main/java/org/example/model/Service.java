@@ -84,7 +84,7 @@ public class Service implements IService {
                     .append(" WHERE id = ")
                     .append(id)
                     .append(";");
-
+            System.out.println(query);
             if (connection.createStatement().executeUpdate(query.toString()) == 0)
                 throw new SQLException("We couldn't delete record with id: " + id);
 

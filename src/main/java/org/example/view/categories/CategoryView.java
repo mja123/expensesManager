@@ -15,12 +15,13 @@ public class CategoryView extends View {
     private static final Controller controller = new Controller();
     private static final JTextField nameField = nameField();
     private static final JComboBox<String> categoryField = categoryField();
+    private static final CategoryList categoryList = new CategoryList();
 
     public CategoryView(Dimension screenDimension, ExpensesView expensesPanel) {
         super("Categories", JFrame.DISPOSE_ON_CLOSE);
         this.setLayout(new BorderLayout());
         this.add(new CategoryView.NavBar(expensesPanel), BorderLayout.NORTH);
-        this.add(new CategoryList(), BorderLayout.CENTER);
+        this.add(categoryList, BorderLayout.CENTER);
         this.add(new CategoryView.NewExpenseForm(), BorderLayout.SOUTH);
         this.setSize(screenDimension);
     }
@@ -42,7 +43,7 @@ public class CategoryView extends View {
         private void createNewExpense(ExpensesView expensesPanel) {
             CategoryDTO categoryDTO = new CategoryDTO(nameField.getText());
             controller.create(categoryDTO);
-            CategoryList.addRow(categoryDTO);
+            categoryList.addRow(categoryDTO);
             expensesPanel.addCategory(categoryDTO.getName());
         }
     }
@@ -54,12 +55,12 @@ public class CategoryView extends View {
         }
 
         private void deleteExpense(ExpensesView expensesPanel) {
-            JTable categoriesTable = CategoryList.getCategoriesTable();
+            JTable categoriesTable = categoryList.getTable();
             int selectRow = categoriesTable.getSelectedRow();
             String categoryName = (String) categoriesTable.getValueAt(selectRow, 1);
             int categoryId = (int) categoriesTable.getValueAt(selectRow, 0);
             controller.delete(categoryId, ETable.CATEGORY);
-            CategoryList.deleteRow(selectRow);
+            categoryList.deleteRow(selectRow);
             expensesPanel.deleteCategory(categoryName);
         }
     }

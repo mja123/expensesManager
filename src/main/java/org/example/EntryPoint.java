@@ -21,7 +21,6 @@ public class EntryPoint {
 
 /*
 TODO:
-- Refactor list classes to reuse code
 - Add exceptions
 - Add messages
  */

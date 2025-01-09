@@ -20,12 +20,13 @@ public class ExpensesView extends View {
     private static final JTextField amountField = amountField();
     private static final JComboBox<String> categoryField = categoryField();
     private static Dimension screenDimension;
+    private static final ExpensesList expensesList = new ExpensesList();
 
     public ExpensesView() {
         super("Expenses", JFrame.EXIT_ON_CLOSE);
         this.setLayout(new BorderLayout());
         this.add(new NavBar(this), BorderLayout.NORTH);
-        this.add(new ExpensesList(), BorderLayout.CENTER);
+        this.add(expensesList, BorderLayout.CENTER);
         this.add(new NewExpenseForm(), BorderLayout.SOUTH);
         this.pack();
         screenDimension = new Dimension(this.getWidth(), this.getHeight());
@@ -57,7 +58,7 @@ public class ExpensesView extends View {
                     (String) categoryField.getSelectedItem()
             );
             controller.create(expenseDTO);
-            ExpensesList.addRow(expenseDTO);
+            expensesList.addRow(expenseDTO);
         }
     }
 
@@ -68,11 +69,11 @@ public class ExpensesView extends View {
         }
 
         private void deleteExpense() {
-            JTable expensesTable = ExpensesList.getExpensesTable();
+            JTable expensesTable = expensesList.getTable();
             int selectRow = expensesTable.getSelectedRow();
             int expenseId = (int) expensesTable.getValueAt(selectRow, 0);
             controller.delete(expenseId, ETable.EXPENSE);
-            ExpensesList.deleteRow(selectRow);
+            expensesList.deleteRow(selectRow);
         }
     }
 

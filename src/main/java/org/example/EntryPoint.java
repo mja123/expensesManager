@@ -21,6 +21,5 @@ public class EntryPoint {
 
 /*
 TODO:
-- Add exceptions
-- Add messages
+- Add exceptions with dialog messages in all possible operations with create and delete
  */

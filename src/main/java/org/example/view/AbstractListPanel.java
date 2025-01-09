@@ -1,6 +1,7 @@
 package org.example.view;
 
 import org.example.controller.Controller;
+import org.example.model.dto.IDTO;
 import org.example.utils.enums.ETable;
 
 import javax.swing.*;
@@ -8,7 +9,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.function.Consumer;
 
-public abstract class AbstractListPanel<T> extends JPanel {
+public abstract class AbstractListPanel<T extends IDTO> extends JPanel {
     protected DefaultTableModel tableModel;
     protected final Controller controller;
     protected JTable table;

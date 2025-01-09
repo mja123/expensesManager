@@ -32,9 +32,6 @@ public class ExpensesView extends View {
         screenDimension = new Dimension(this.getWidth(), this.getHeight());
     }
 
-    public ExpensesView getThis() {
-        return this;
-    }
     private static class NavBar extends JPanel {
         NavBar(ExpensesView panel) {
             this.setLayout(new FlowLayout(FlowLayout.CENTER));

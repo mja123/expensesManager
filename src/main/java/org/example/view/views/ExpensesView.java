@@ -1,11 +1,12 @@
-package org.example.view.expenses;
+package org.example.view.views;
 
 import org.example.controller.Controller;
 import org.example.model.dto.CategoryDTO;
 import org.example.model.dto.ExpenseDTO;
 import org.example.utils.enums.ETable;
-import org.example.view.View;
-import org.example.view.categories.CategoryView;
+import org.example.utils.excpetions.ExpensesManagerException;
+import org.example.utils.excpetions.FieldException;
+import org.example.view.listPanel.ExpensesList;
 
 import javax.swing.*;
 import java.awt.*;
@@ -35,41 +36,47 @@ public class ExpensesView extends View {
     private static class NavBar extends JPanel {
         NavBar(ExpensesView panel) {
             this.setLayout(new FlowLayout(FlowLayout.CENTER));
-            this.add(new CreateButton());
-            this.add(new DeleteButton());
+            this.add(new CreateButton(panel));
+            this.add(new DeleteButton(panel));
             this.add(new CategoryButton(panel));
         }
     }
 
     private static class CreateButton extends JButton {
-        public CreateButton() {
+        public CreateButton(ExpensesView expensesView) {
             super("Create");
-            this.addActionListener(event -> createNewExpense());
+            this.addActionListener(event -> createNewExpense(expensesView));
         }
 
-        private void createNewExpense() {
-            ExpenseDTO expenseDTO = new ExpenseDTO(
-                    nameField.getText(),
-                    Double.parseDouble(amountField.getText()),
-                    new Date(Calendar.getInstance().getTimeInMillis()),
-                    (String) categoryField.getSelectedItem()
-            );
-            controller.create(expenseDTO);
-            expensesList.addRow(expenseDTO);
+        private void createNewExpense(ExpensesView expensesView) {
+            try {
+                if (nameField.getText().isEmpty() || amountField.getText().isEmpty()) throw new FieldException();
+                ExpenseDTO expenseDTO = new ExpenseDTO(
+                        nameField.getText(),
+                        Double.parseDouble(amountField.getText()),
+                        new Date(Calendar.getInstance().getTimeInMillis()),
+                        (String) categoryField.getSelectedItem()
+                );
+                controller.create(expenseDTO);
+                expensesList.addRow(expenseDTO);
+            } catch (ExpensesManagerException e) {
+                e.showErrorDialog(expensesView, e.getMessage());
+            }
+
         }
     }
 
     private static class DeleteButton extends JButton {
-        public DeleteButton() {
+        public DeleteButton(ExpensesView expensesView) {
             super("Delete");
-            this.addActionListener(event -> deleteExpense());
+            this.addActionListener(event -> deleteExpense(expensesView));
         }
 
-        private void deleteExpense() {
+        private void deleteExpense(ExpensesView expensesView) {
             JTable expensesTable = expensesList.getTable();
             int selectRow = expensesTable.getSelectedRow();
             int expenseId = (int) expensesTable.getValueAt(selectRow, 0);
-            controller.delete(expenseId, ETable.EXPENSE);
+//            controller.delete(expenseId, ETable.EXPENSE);
             expensesList.deleteRow(selectRow);
         }
     }
@@ -114,7 +121,7 @@ public class ExpensesView extends View {
         List<CategoryDTO> categoriesDTO = new ArrayList<>();
         JComboBox<String> categoryField = new JComboBox<>();
 
-        controller.getAll(ETable.CATEGORY).forEach(c -> categoriesDTO.add((CategoryDTO) c));
+//        controller.getAll(ETable.CATEGORY).forEach(c -> categoriesDTO.add((CategoryDTO) c));
         categoriesDTO.forEach(c -> categoryField.addItem(c.getName()));
 
         return categoryField;

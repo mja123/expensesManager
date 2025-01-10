@@ -1,6 +1,6 @@
 package org.example;
 
-import org.example.view.expenses.ExpensesView;
+import org.example.view.views.ExpensesView;
 
 public class EntryPoint {
     public static void main(String[] args) {
@@ -21,5 +21,5 @@ public class EntryPoint {
 
 /*
 TODO:
-- Add exceptions with dialog messages in all possible operations with create and delete
+- Uncomment all commented methods in views folder and add exceptions with dialog messages
  */

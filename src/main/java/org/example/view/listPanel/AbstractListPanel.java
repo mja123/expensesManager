@@ -1,8 +1,9 @@
-package org.example.view;
+package org.example.view.listPanel;
 
 import org.example.controller.Controller;
 import org.example.model.dto.IDTO;
 import org.example.utils.enums.ETable;
+import org.example.utils.excpetions.ServerException;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -28,7 +29,11 @@ public abstract class AbstractListPanel<T extends IDTO> extends JPanel {
 
     // Populate the table with data
     private void fillTable(ETable tableType, Consumer<T> rowAdder) {
-        controller.getAll(tableType).forEach(e -> rowAdder.accept((T) e));
+        try {
+            controller.getAll(tableType).forEach(e -> rowAdder.accept((T) e));
+        } catch (ServerException e) {
+            System.out.println("Server exception: " + e.getMessage());
+        }
     }
 
     // Delete a row by index

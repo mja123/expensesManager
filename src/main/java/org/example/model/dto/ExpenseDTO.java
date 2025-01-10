@@ -25,7 +25,7 @@ public class ExpenseDTO implements IDTO {
         this.name = name;
         this.amount = amount;
         this.date = date;
-        this.category = Controller.getCategoryId(categoryName);
+//        this.category = Controller.getCategoryId(categoryName);
     }
 
     public Integer getId() {

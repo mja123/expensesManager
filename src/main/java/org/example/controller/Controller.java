@@ -7,6 +7,8 @@ import org.example.model.dto.IDTO;
 import org.example.utils.DTOParser;
 import org.example.utils.ObjectBuilder;
 import org.example.utils.enums.ETable;
+import org.example.utils.excpetions.DuplicateEntryException;
+import org.example.utils.excpetions.ServerException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.ResultSet;
@@ -20,17 +22,20 @@ public class Controller {
     public Controller() {
     }
 
-    public void create(IDTO dtoObject) {
+    public void create(IDTO dtoObject) throws ServerException {
         try {
             service.create(dtoObject);
             ResultSet expenseCrated = service.get(dtoObject.getName(), ETable.fromValue(DTOParser.getTableName(dtoObject)));
             expenseCrated.last();
             dtoObject.setId(getDTOFromResultSet(expenseCrated, ETable.EXPENSE).getId());
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        } catch (ServerException | SQLException e) {
+            if (e.getMessage().contains("Duplicate entry")) {
+                throw new DuplicateEntryException();
+            }
+            throw new ServerException(e.getMessage());
         }
     }
-    public List<IDTO> getAll(ETable table) {
+    public List<IDTO> getAll(ETable table) throws ServerException {
         ResultSet getAllRecords = service.getAll(table);
         try {
             return ObjectBuilder.setObjects(getAllRecords, table.getTableName());
@@ -40,29 +45,29 @@ public class Controller {
         }
     }
 
-    public void delete(int id, ETable table) {
+    public void delete(int id, ETable table) throws ServerException {
         service.delete(id, table);
     }
-    public static Integer getCategoryId(String name) {
+    public static Integer getCategoryId(String name) throws ServerException {
         ResultSet category = service.get(name, ETable.CATEGORY);
         System.out.println("Result: " + category);
         return getDTOFromResultSet(category, ETable.CATEGORY).getId();
     }
 
-    // Currently not in used
-    public List<ExpenseDTO> getAllExpensesFromCategory(CategoryDTO category) {
-        try {
-            ResultSet result = service.getAllFromCategory(category.getId());
-            List<IDTO> rawDTO;
-            rawDTO = ObjectBuilder.setObjects(result, "expenses");
-            List<ExpenseDTO> expensesDTO = new ArrayList<>();
-            rawDTO.forEach(r -> expensesDTO.add((ExpenseDTO) r));
-            return expensesDTO;
-        } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | InstantiationException |
-                 IllegalAccessException | SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
+//    // Currently not in used
+//    public List<ExpenseDTO> getAllExpensesFromCategory(CategoryDTO category) {
+//        try {
+//            ResultSet result = service.getAllFromCategory(category.getId());
+//            List<IDTO> rawDTO;
+//            rawDTO = ObjectBuilder.setObjects(result, "expenses");
+//            List<ExpenseDTO> expensesDTO = new ArrayList<>();
+//            rawDTO.forEach(r -> expensesDTO.add((ExpenseDTO) r));
+//            return expensesDTO;
+//        } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | InstantiationException |
+//                 IllegalAccessException | SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 
     private static IDTO getDTOFromResultSet(ResultSet resultSet, ETable table) {
         try {

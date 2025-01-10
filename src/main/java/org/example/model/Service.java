@@ -1,20 +1,13 @@
 package org.example.model;
 
-import org.example.DBConnection;
-import org.example.model.dto.ExpenseDTO;
 import org.example.model.dto.IDTO;
 import org.example.utils.DTOParser;
-import org.example.utils.ObjectBuilder;
 import org.example.utils.QueryBuilder;
 import org.example.utils.enums.ETable;
+import org.example.utils.excpetions.ServerException;
 
-import java.lang.reflect.InvocationTargetException;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-
-import static java.sql.ResultSet.TYPE_SCROLL_INSENSITIVE;
 
 public class Service implements IService {
     private final Connection connection;
@@ -25,7 +18,7 @@ public class Service implements IService {
     }
 
     @Override
-    public void create(IDTO object) {
+    public void create(IDTO object) throws ServerException {
         query = new StringBuilder();
         try {
             Map<String, Map<Object, Object>> data = DTOParser.getDTOData(object);
@@ -35,14 +28,14 @@ public class Service implements IService {
             if (statement.executeUpdate() == 0) throw new SQLException("Record wasn't created");
             System.out.println(statement);
         } catch (SQLException | NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException(e);
+            throw new ServerException(e.getMessage());
         }
         System.out.println(query);
     }
 
 
     @Override
-    public ResultSet get(String name, ETable table) {
+    public ResultSet get(String name, ETable table) throws ServerException {
         try {
             query = new StringBuilder();
             query.append("SELECT * FROM ")
@@ -58,12 +51,12 @@ public class Service implements IService {
                     ResultSet.CONCUR_READ_ONLY
                     ).executeQuery(query.toString());
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new ServerException(e.getMessage());
         }
     }
 
     @Override
-    public ResultSet getAll(ETable table) {
+    public ResultSet getAll(ETable table) throws ServerException {
         try {
             query = new StringBuilder();
             query.append("SELECT * FROM ")
@@ -71,12 +64,12 @@ public class Service implements IService {
                     .append(";");
             return connection.createStatement().executeQuery(query.toString());
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new ServerException(e.getMessage());
         }
     }
 
     @Override
-    public void delete(Integer id, ETable table) {
+    public void delete(Integer id, ETable table) throws ServerException {
         try {
             query = new StringBuilder();
             query.append("DELETE FROM ")
@@ -89,11 +82,11 @@ public class Service implements IService {
                 throw new SQLException("We couldn't delete record with id: " + id);
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new ServerException(e.getMessage());
         }
     }
     @Override
-    public ResultSet getAllFromCategory(Integer categoryId) {
+    public ResultSet getAllFromCategory(Integer categoryId) throws ServerException {
         try {
             query = new StringBuilder();
             query.append("SELECT * FROM expenses WHERE category = ")
@@ -101,7 +94,7 @@ public class Service implements IService {
                     .append(";");
             return connection.createStatement().executeQuery(query.toString());
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new ServerException(e.getMessage());
         }
     }
 }

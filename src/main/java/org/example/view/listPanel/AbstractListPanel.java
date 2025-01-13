@@ -29,11 +29,11 @@ public abstract class AbstractListPanel<T extends IDTO> extends JPanel {
 
     // Populate the table with data
     private void fillTable(ETable tableType, Consumer<T> rowAdder) {
-        try {
+//        try {
             controller.getAll(tableType).forEach(e -> rowAdder.accept((T) e));
-        } catch (ServerException e) {
-            System.out.println("Server exception: " + e.getMessage());
-        }
+//        } catch (ServerException e) {
+//            System.out.println("Server exception: " + e.getMessage());
+//        }
     }
 
     // Delete a row by index

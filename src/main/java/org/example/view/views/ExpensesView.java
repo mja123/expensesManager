@@ -50,19 +50,35 @@ public class ExpensesView extends View {
 
         private void createNewExpense(ExpensesView expensesView) {
             try {
-                if (nameField.getText().isEmpty() || amountField.getText().isEmpty()) throw new FieldException();
-                ExpenseDTO expenseDTO = new ExpenseDTO(
-                        nameField.getText(),
-                        Double.parseDouble(amountField.getText()),
-                        new Date(Calendar.getInstance().getTimeInMillis()),
-                        (String) categoryField.getSelectedItem()
-                );
+                ExpenseDTO expenseDTO = expenseDTOCreation();
                 controller.create(expenseDTO);
                 expensesList.addRow(expenseDTO);
             } catch (ExpensesManagerException e) {
                 e.showErrorDialog(expensesView, e.getMessage());
             }
 
+        }
+
+        private ExpenseDTO expenseDTOCreation() throws ExpensesManagerException {
+            String category = (String) categoryField.getSelectedItem();
+            double amount;
+
+            if (nameField.getText().isEmpty() ||
+                    amountField.getText().isEmpty() ||
+                    category == null)
+                throw new FieldException();
+
+            try {
+                amount = Double.parseDouble(amountField.getText());
+            } catch (NumberFormatException e) {
+                throw new FieldException("Amount is not a number.");
+            }
+            return new ExpenseDTO(
+                    nameField.getText(),
+                    amount,
+                    new Date(Calendar.getInstance().getTimeInMillis()),
+                    category
+            );
         }
     }
 
@@ -73,11 +89,27 @@ public class ExpensesView extends View {
         }
 
         private void deleteExpense(ExpensesView expensesView) {
-            JTable expensesTable = expensesList.getTable();
-            int selectRow = expensesTable.getSelectedRow();
-            int expenseId = (int) expensesTable.getValueAt(selectRow, 0);
-//            controller.delete(expenseId, ETable.EXPENSE);
-            expensesList.deleteRow(selectRow);
+            try {
+                JTable expensesTable = expensesList.getTable();
+                int selectedRow = getSelectedRow(expensesTable);
+                int expenseId = getSelectedExpense(selectedRow, expensesTable);
+
+                controller.delete(expenseId, ETable.EXPENSE);
+                expensesList.deleteRow(selectedRow);
+            } catch (ExpensesManagerException e) {
+                e.showErrorDialog(expensesView, e.getMessage());
+            }
+        }
+        private int getSelectedExpense(int selectedRow, JTable expensesTable) {
+            return (int) expensesTable.getValueAt(selectedRow, 0);
+        }
+
+        private int getSelectedRow(JTable expensesTable) throws FieldException {
+            int selectedRow = expensesTable.getSelectedRow();
+            if (selectedRow  == -1) {
+                throw new FieldException("Row is not selected.");
+            }
+            return selectedRow;
         }
     }
 
@@ -121,7 +153,7 @@ public class ExpensesView extends View {
         List<CategoryDTO> categoriesDTO = new ArrayList<>();
         JComboBox<String> categoryField = new JComboBox<>();
 
-//        controller.getAll(ETable.CATEGORY).forEach(c -> categoriesDTO.add((CategoryDTO) c));
+        controller.getAll(ETable.CATEGORY).forEach(c -> categoriesDTO.add((CategoryDTO) c));
         categoriesDTO.forEach(c -> categoryField.addItem(c.getName()));
 
         return categoryField;

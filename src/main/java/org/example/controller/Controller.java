@@ -1,19 +1,16 @@
 package org.example.controller;
 
 import org.example.model.Service;
-import org.example.model.dto.CategoryDTO;
-import org.example.model.dto.ExpenseDTO;
 import org.example.model.dto.IDTO;
 import org.example.utils.DTOParser;
 import org.example.utils.ObjectBuilder;
 import org.example.utils.enums.ETable;
-import org.example.utils.excpetions.DuplicateEntryException;
+import org.example.utils.excpetions.DatabaseConstraintException;
 import org.example.utils.excpetions.ServerException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Controller {
@@ -30,13 +27,19 @@ public class Controller {
             dtoObject.setId(getDTOFromResultSet(expenseCrated, ETable.EXPENSE).getId());
         } catch (ServerException | SQLException e) {
             if (e.getMessage().contains("Duplicate entry")) {
-                throw new DuplicateEntryException();
+                throw new DatabaseConstraintException();
             }
             throw new ServerException(e.getMessage());
         }
     }
-    public List<IDTO> getAll(ETable table) throws ServerException {
-        ResultSet getAllRecords = service.getAll(table);
+//    public List<IDTO> getAll(ETable table) throws ServerException {
+    public List<IDTO> getAll(ETable table) {
+        ResultSet getAllRecords = null;
+        try {
+            getAllRecords = service.getAll(table);
+        } catch (ServerException e) {
+            throw new RuntimeException(e);
+        }
         try {
             return ObjectBuilder.setObjects(getAllRecords, table.getTableName());
         } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | InstantiationException |
@@ -46,7 +49,14 @@ public class Controller {
     }
 
     public void delete(int id, ETable table) throws ServerException {
-        service.delete(id, table);
+        try {
+            service.delete(id, table);
+        } catch (ServerException e) {
+            if (e.getMessage().contains("foreign key constraint fails")) {
+                throw new DatabaseConstraintException("You need to delete expenses with this category before.");
+            }
+        }
+
     }
     public static Integer getCategoryId(String name) throws ServerException {
         ResultSet category = service.get(name, ETable.CATEGORY);

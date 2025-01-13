@@ -21,5 +21,5 @@ public class EntryPoint {
 
 /*
 TODO:
-- Uncomment all commented methods in views folder and add exceptions with dialog messages
+- Clean up
  */

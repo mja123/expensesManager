@@ -3,7 +3,12 @@ package org.example.utils.excpetions;
 import java.awt.*;
 
 public class ServerException extends ExpensesManagerException {
-    private final String message;
+    private String message;
+
+    public ServerException() {
+        super();
+    }
+
     public ServerException(String message) {
         super(message);
         this.message = message;

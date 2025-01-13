@@ -27,7 +27,7 @@ public abstract class ExpensesManagerException extends Exception {
             }
         });
 
-        dialog.setSize(300, 150);
+        dialog.setSize(350, 150);
         dialog.setVisible(true);
     }
 

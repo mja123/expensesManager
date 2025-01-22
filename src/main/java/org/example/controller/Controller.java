@@ -32,19 +32,13 @@ public class Controller {
             throw new ServerException(e.getMessage());
         }
     }
-//    public List<IDTO> getAll(ETable table) throws ServerException {
-    public List<IDTO> getAll(ETable table) {
-        ResultSet getAllRecords = null;
-        try {
-            getAllRecords = service.getAll(table);
-        } catch (ServerException e) {
-            throw new RuntimeException(e);
-        }
+    public List<IDTO> getAll(ETable table) throws ServerException {
+        ResultSet getAllRecords = service.getAll(table);
         try {
             return ObjectBuilder.setObjects(getAllRecords, table.getTableName());
         } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | InstantiationException |
                  IllegalAccessException | SQLException e) {
-            throw new RuntimeException(e);
+            throw new ServerException();
         }
     }
 
@@ -60,32 +54,15 @@ public class Controller {
     }
     public static Integer getCategoryId(String name) throws ServerException {
         ResultSet category = service.get(name, ETable.CATEGORY);
-        System.out.println("Result: " + category);
         return getDTOFromResultSet(category, ETable.CATEGORY).getId();
     }
 
-//    // Currently not in used
-//    public List<ExpenseDTO> getAllExpensesFromCategory(CategoryDTO category) {
-//        try {
-//            ResultSet result = service.getAllFromCategory(category.getId());
-//            List<IDTO> rawDTO;
-//            rawDTO = ObjectBuilder.setObjects(result, "expenses");
-//            List<ExpenseDTO> expensesDTO = new ArrayList<>();
-//            rawDTO.forEach(r -> expensesDTO.add((ExpenseDTO) r));
-//            return expensesDTO;
-//        } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | InstantiationException |
-//                 IllegalAccessException | SQLException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
-
-    private static IDTO getDTOFromResultSet(ResultSet resultSet, ETable table) {
+    private static IDTO getDTOFromResultSet(ResultSet resultSet, ETable table) throws ServerException {
         try {
-            System.out.println("Result: " + resultSet);
             return ObjectBuilder.setValues(resultSet, table.getTableName());
         } catch (SQLException | ClassNotFoundException | NoSuchMethodException | InvocationTargetException |
                  InstantiationException | IllegalAccessException e) {
-            throw new RuntimeException(e);
+            throw new ServerException();
         }
     }
 }

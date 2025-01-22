@@ -6,6 +6,7 @@ import org.example.model.dto.ExpenseDTO;
 import org.example.utils.enums.ETable;
 import org.example.utils.excpetions.ExpensesManagerException;
 import org.example.utils.excpetions.FieldException;
+import org.example.utils.excpetions.ServerException;
 import org.example.view.listPanel.ExpensesList;
 
 import javax.swing.*;
@@ -17,9 +18,9 @@ import java.util.List;
 
 public class ExpensesView extends View {
     private static final Controller controller = new Controller();
-    private static final JTextField nameField = nameField();
-    private static final JTextField amountField = amountField();
-    private static final JComboBox<String> categoryField = categoryField();
+    private static final JTextField nameField = new JTextField(40);
+    private static final JTextField amountField = new JTextField(25);
+    private static JComboBox<String> categoryField;
     private static Dimension screenDimension;
     private static final ExpensesList expensesList = new ExpensesList();
 
@@ -28,7 +29,7 @@ public class ExpensesView extends View {
         this.setLayout(new BorderLayout());
         this.add(new NavBar(this), BorderLayout.NORTH);
         this.add(expensesList, BorderLayout.CENTER);
-        this.add(new NewExpenseForm(), BorderLayout.SOUTH);
+        this.add(new NewExpenseForm(this), BorderLayout.SOUTH);
         this.pack();
         screenDimension = new Dimension(this.getWidth(), this.getHeight());
     }
@@ -123,7 +124,8 @@ public class ExpensesView extends View {
         }
     }
     private static class NewExpenseForm extends JPanel {
-        NewExpenseForm() {
+        NewExpenseForm(ExpensesView expensesView) {
+            categoryField = categoryField(expensesView);
             add(new JLabel("Name"));
             add(nameField);
             add(new JLabel("Amount"));
@@ -141,19 +143,16 @@ public class ExpensesView extends View {
         categoryField.removeItem(categoryName);
         this.pack();
     }
-    private static JTextField nameField() {
-        return new JTextField(40);
-    }
 
-    private static JTextField amountField() {
-        return new JTextField(25);
-    }
-
-    private static JComboBox<String> categoryField() {
+    private static JComboBox<String> categoryField(ExpensesView expensesView) {
         List<CategoryDTO> categoriesDTO = new ArrayList<>();
         JComboBox<String> categoryField = new JComboBox<>();
 
-        controller.getAll(ETable.CATEGORY).forEach(c -> categoriesDTO.add((CategoryDTO) c));
+        try {
+            controller.getAll(ETable.CATEGORY).forEach(c -> categoriesDTO.add((CategoryDTO) c));
+        } catch (ServerException e) {
+            e.showErrorDialog(expensesView, e.getMessage());
+        }
         categoriesDTO.forEach(c -> categoryField.addItem(c.getName()));
 
         return categoryField;

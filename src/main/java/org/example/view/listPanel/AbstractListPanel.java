@@ -16,7 +16,12 @@ public abstract class AbstractListPanel<T extends IDTO> extends JPanel {
     protected JTable table;
 
     public AbstractListPanel(ETable tableType, String[] columns) {
-        tableModel = new DefaultTableModel(new Object[][]{}, columns);
+        tableModel = new DefaultTableModel(new Object[][]{}, columns){
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         controller = new Controller();
         table = new JTable(tableModel);
         fillTable(tableType, this::addRow);
@@ -29,11 +34,11 @@ public abstract class AbstractListPanel<T extends IDTO> extends JPanel {
 
     // Populate the table with data
     private void fillTable(ETable tableType, Consumer<T> rowAdder) {
-//        try {
+        try {
             controller.getAll(tableType).forEach(e -> rowAdder.accept((T) e));
-//        } catch (ServerException e) {
-//            System.out.println("Server exception: " + e.getMessage());
-//        }
+        } catch (ServerException e) {
+            System.out.println("Server exception: " + e.getMessage());
+        }
     }
 
     // Delete a row by index

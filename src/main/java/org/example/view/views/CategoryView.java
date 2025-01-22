@@ -62,8 +62,8 @@ public class CategoryView extends View {
                 JTable categoriesTable = categoryList.getTable();
                 int selectedRow = getSelectedRow(categoriesTable);
                 controller.delete(getSelectedCategory(selectedRow, categoriesTable), ETable.CATEGORY);
-                categoryList.deleteRow(selectedRow);
                 expensesPanel.deleteCategory(getSelectedCategoryName(selectedRow, categoriesTable));
+                categoryList.deleteRow(selectedRow);
             } catch (ExpensesManagerException e) {
                 e.showErrorDialog(categoryPanel, e.getMessage());
             }

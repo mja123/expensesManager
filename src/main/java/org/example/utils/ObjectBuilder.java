@@ -39,7 +39,6 @@ public class ObjectBuilder {
             switch (row.getValue().getClass().getTypeName()) {
                 case "java.lang.Integer" -> {
                     method = object.getClass().getMethod(setter, Integer.class);
-                    System.out.println(Integer.valueOf((row.getValue().toString())) + " type: " + Integer.valueOf((row.getValue().toString())).getClass().getTypeName());
                     method.invoke(object, Integer.valueOf((row.getValue().toString())));
                 }
                 case "java.lang.String" -> {
@@ -73,7 +72,6 @@ public class ObjectBuilder {
             String identifier = metaData.getColumnName(i);
             int columnIndex = data.findColumn(identifier);
             Object value = data.getObject(columnIndex);
-            System.out.println(value);
             attributes.put(identifier, Map.of(type, value));
         }
         return attributes;

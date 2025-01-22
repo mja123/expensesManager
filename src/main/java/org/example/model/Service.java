@@ -24,9 +24,7 @@ public class Service implements IService {
             Map<String, Map<Object, Object>> data = DTOParser.getDTOData(object);
             PreparedStatement statement = connection.prepareStatement(QueryBuilder.create(object, data));
             QueryBuilder.replacePlaceholders(statement, data);
-            System.out.println(statement.toString());
             if (statement.executeUpdate() == 0) throw new SQLException("Record wasn't created");
-            System.out.println(statement);
         } catch (SQLException | NoSuchFieldException | IllegalAccessException e) {
             throw new ServerException(e.getMessage());
         }
@@ -51,6 +49,7 @@ public class Service implements IService {
                     ResultSet.CONCUR_READ_ONLY
                     ).executeQuery(query.toString());
         } catch (SQLException e) {
+            System.out.println(query);
             throw new ServerException(e.getMessage());
         }
     }
@@ -62,8 +61,10 @@ public class Service implements IService {
             query.append("SELECT * FROM ")
                     .append(table.getTableName())
                     .append(";");
+            System.out.println(query);
             return connection.createStatement().executeQuery(query.toString());
         } catch (SQLException e) {
+            System.out.println(query);
             throw new ServerException(e.getMessage());
         }
     }
@@ -82,18 +83,7 @@ public class Service implements IService {
                 throw new SQLException("We couldn't delete record with id: " + id);
 
         } catch (SQLException e) {
-            throw new ServerException(e.getMessage());
-        }
-    }
-    @Override
-    public ResultSet getAllFromCategory(Integer categoryId) throws ServerException {
-        try {
-            query = new StringBuilder();
-            query.append("SELECT * FROM expenses WHERE category = ")
-                    .append(categoryId)
-                    .append(";");
-            return connection.createStatement().executeQuery(query.toString());
-        } catch (SQLException e) {
+            System.out.println(query);
             throw new ServerException(e.getMessage());
         }
     }

@@ -11,7 +11,7 @@ public class ExpensesList extends AbstractListPanel<ExpenseDTO> {
 
     @Override
     public void addRow(ExpenseDTO expense) {
-        tableModel.addRow(new Object[]{
+        tableModel.addRow(new Object[] {
                 expense.getId(), expense.getName(), expense.getAmount(), expense.getDate(), expense.getCategory()
         });
     }

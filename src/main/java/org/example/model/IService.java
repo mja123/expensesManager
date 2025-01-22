@@ -11,8 +11,6 @@ import java.util.List;
 public interface IService {
     void create(IDTO object) throws ServerException;
     ResultSet get(String name, ETable table) throws ServerException;
-//    IDTO getLast(String name, ETable table);
     ResultSet getAll(ETable table) throws ServerException;
     void delete(Integer id, ETable table) throws ServerException;
-    ResultSet getAllFromCategory(Integer categoryId) throws ServerException;
 }

@@ -1,8 +1,8 @@
-package org.example.view.views;
+package org.example.view.frame;
 
 import javax.swing.*;
-import java.awt.*;
 
+// View base class
 public abstract class View extends JFrame {
     protected View(String title, int closeBehavior) {
         this.setTitle(title);

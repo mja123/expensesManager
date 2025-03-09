@@ -16,7 +16,8 @@ public abstract class AbstractListPanel<T extends IDTO> extends JPanel {
     protected JTable table;
 
     public AbstractListPanel(ETable tableType, String[] columns) {
-        tableModel = new DefaultTableModel(new Object[][]{}, columns){
+        // Create new table and make rows uneditable
+        tableModel = new DefaultTableModel(new Object[][]{}, columns) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -35,6 +36,7 @@ public abstract class AbstractListPanel<T extends IDTO> extends JPanel {
     // Populate the table with data
     private void fillTable(ETable tableType, Consumer<T> rowAdder) {
         try {
+            // Apply the Consumer lambda implementation from subclass to add rows in table
             controller.getAll(tableType).forEach(e -> rowAdder.accept((T) e));
         } catch (ServerException e) {
             System.out.println("Server exception: " + e.getMessage());

@@ -13,12 +13,14 @@ public class Service implements IService {
     private final Connection connection;
     private StringBuilder query;
     public Service() {
+        // Get database connection
         this.connection = DBConnection.getConnection();
         this.query = new StringBuilder();
     }
 
     @Override
     public void create(IDTO object) throws ServerException {
+        // Create new record in table based on dto
         query = new StringBuilder();
         try {
             Map<String, Map<Object, Object>> data = DTOParser.getDTOData(object);
@@ -34,6 +36,7 @@ public class Service implements IService {
 
     @Override
     public ResultSet get(String name, ETable table) throws ServerException {
+        // Get record in table
         try {
             query = new StringBuilder();
             query.append("SELECT * FROM ")
@@ -56,6 +59,7 @@ public class Service implements IService {
 
     @Override
     public ResultSet getAll(ETable table) throws ServerException {
+        // Get all records from table
         try {
             query = new StringBuilder();
             query.append("SELECT * FROM ")
@@ -71,6 +75,7 @@ public class Service implements IService {
 
     @Override
     public void delete(Integer id, ETable table) throws ServerException {
+        // Delete record in table based on id
         try {
             query = new StringBuilder();
             query.append("DELETE FROM ")

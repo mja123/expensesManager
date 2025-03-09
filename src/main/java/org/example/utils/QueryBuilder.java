@@ -10,6 +10,7 @@ import java.util.Set;
 
 public class QueryBuilder {
    public static String create(IDTO object, Map<String, Map<Object, Object>> objectData) {
+       // Create a dynamic INSERT query based on objectData
        StringBuilder query = new StringBuilder();
 
        query.append("INSERT INTO ")
@@ -38,6 +39,7 @@ public class QueryBuilder {
 
     public static void  setType(PreparedStatement statement, Set<Map.Entry<Object, Object>> dataSet, int index)
             throws SQLException, NoSuchFieldException, IllegalAccessException {
+       // Set statement data type based on attribute type
         Map.Entry<Object, Object> data = dataSet.stream().findFirst().get();
 
         switch (data.getKey().toString()) {
@@ -45,7 +47,8 @@ public class QueryBuilder {
             case "java.lang.Double" -> statement.setDouble(index, (Double) data.getValue());
             case "java.sql.Date" -> statement.setDate(index, (Date) data.getValue());
             case "java.lang.Integer" -> statement.setInt(index, (Integer) data.getValue());
-            default -> statement.setInt(index, data.getValue().getClass().getDeclaredField("id").getInt(data.getValue()));
+            default -> statement.setInt(index, data.getValue().getClass().getDeclaredField("id")
+                    .getInt(data.getValue()));
         }
     }
 }

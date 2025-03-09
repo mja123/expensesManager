@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.util.List;
 
 public interface IService {
+    // Service Interface with base methods
     void create(IDTO object) throws ServerException;
     ResultSet get(String name, ETable table) throws ServerException;
     ResultSet getAll(ETable table) throws ServerException;

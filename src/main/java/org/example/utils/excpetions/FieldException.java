@@ -1,8 +1,7 @@
 package org.example.utils.excpetions;
 
-import java.awt.*;
-
 public class FieldException extends ExpensesManagerException {
+    // Required field exception class
     private String errorMessage = "Empty required field.";
     public FieldException() {
         super();

@@ -1,7 +1,5 @@
 package org.example.utils.excpetions;
 
-import java.awt.*;
-
 public class ServerException extends ExpensesManagerException {
     private final String message;
 

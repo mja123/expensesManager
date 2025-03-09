@@ -22,8 +22,10 @@ public class Controller {
     public void create(IDTO dtoObject) throws ServerException {
         try {
             service.create(dtoObject);
+            // Create dto in database
             ResultSet expenseCrated = service.get(dtoObject.getName(), ETable.fromValue(DTOParser.getTableName(dtoObject)));
             expenseCrated.last();
+            // Set id assign in database in dto
             dtoObject.setId(getDTOFromResultSet(expenseCrated, ETable.EXPENSE).getId());
         } catch (ServerException | SQLException e) {
             if (e.getMessage().contains("Duplicate entry")) {
@@ -33,6 +35,7 @@ public class Controller {
         }
     }
     public List<IDTO> getAll(ETable table) throws ServerException {
+        // Get all records in table
         ResultSet getAllRecords = service.getAll(table);
         try {
             return ObjectBuilder.setObjects(getAllRecords, table.getTableName());
@@ -43,6 +46,7 @@ public class Controller {
     }
 
     public void delete(int id, ETable table) throws ServerException {
+        // Delete record in table
         try {
             service.delete(id, table);
         } catch (ServerException e) {
@@ -53,11 +57,13 @@ public class Controller {
 
     }
     public static Integer getCategoryId(String name) throws ServerException {
+        // Get category id by name
         ResultSet category = service.get(name, ETable.CATEGORY);
         return getDTOFromResultSet(category, ETable.CATEGORY).getId();
     }
 
     private static IDTO getDTOFromResultSet(ResultSet resultSet, ETable table) throws ServerException {
+        // Set values in dto from database result set
         try {
             return ObjectBuilder.setValues(resultSet, table.getTableName());
         } catch (SQLException | ClassNotFoundException | NoSuchMethodException | InvocationTargetException |

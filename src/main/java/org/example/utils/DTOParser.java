@@ -1,7 +1,6 @@
 package org.example.utils;
 
 import org.example.model.dto.IDTO;
-import org.example.utils.enums.ETable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -9,28 +8,32 @@ import java.util.*;
 
 public class DTOParser {
     static public Map<String, Map<Object, Object>> getDTOData(IDTO object) {
+        // Map with <Attribute: <Type, Value>> form
         Map<String, Map<Object, Object>> values = new HashMap<>();
+        // Get dto class getter methods
         List<Method>methods = Arrays.stream(object.getClass().getDeclaredMethods())
                 .filter(m -> m.getName().startsWith("get"))
                 .toList();
         for (Method method : methods) {
+            // Get getter name (attribute)
             String identifier = method.getName().substring(3).toLowerCase();
             Object type = method.getReturnType().getTypeName();
             Object value;
             try {
-                value = method.invoke(object, (Object[]) null);
+                // Invoke getter
+                value = method.invoke(object);
             } catch (IllegalAccessException | InvocationTargetException e) {
                 throw new RuntimeException("We couldn't invoke " + method.getName() + " method");
             }
             if (value == null) continue;
             values.put(identifier, Map.of(type, value));
-
         }
         return values;
     }
 
     static public String getTableName(IDTO object) {
         String[] splitClassName = object.getClass().getName().split("\\.");
+        // Make Java class plural
         return makePlural(splitClassName[splitClassName.length -1].split("(!?DTO)")[0].toLowerCase());
     }
 

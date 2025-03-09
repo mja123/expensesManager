@@ -1,6 +1,7 @@
 package org.example.utils.enums;
 
 public enum ETable {
+    // All tables
     CATEGORY("categories"),
     EXPENSE("expenses");
 

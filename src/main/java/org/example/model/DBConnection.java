@@ -11,13 +11,15 @@ public class DBConnection {
     private static Connection INSTANCE;
 
     public static Connection getConnection() {
+        // Singleton method to use only one connection
         if (INSTANCE == null) {
-            return setConnection();
+            INSTANCE = setConnection();
         }
         return INSTANCE;
     }
 
     private static Connection setConnection() {
+        // Create new database connection based on environment variables
         try {
             return DriverManager.getConnection(getProperty("CONNECTOR") + "://" + getProperty("HOST") +
                     "/" + getProperty("DB") + "?user=" + getProperty("USERNAME") +

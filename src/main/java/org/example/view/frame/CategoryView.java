@@ -1,4 +1,4 @@
-package org.example.view.views;
+package org.example.view.frame;
 
 import org.example.controller.Controller;
 import org.example.utils.excpetions.ExpensesManagerException;
@@ -17,16 +17,21 @@ public class CategoryView extends View {
 
     public CategoryView(Dimension screenDimension, ExpensesView expensesPanel) {
         super("Categories", JFrame.DISPOSE_ON_CLOSE);
+        // Main container
         this.setLayout(new BorderLayout());
+        // Components
         this.add(new CategoryView.NavBar(expensesPanel, this), BorderLayout.NORTH);
         this.add(categoryList, BorderLayout.CENTER);
         this.add(new CategoryView.NewExpenseForm(), BorderLayout.SOUTH);
+        // Set same size as expenses panel
         this.setSize(screenDimension);
     }
 
     private static class NavBar extends JPanel {
         NavBar(ExpensesView expensesPanel, CategoryView categoryPanel) {
+            // Main container
             this.setLayout(new FlowLayout(FlowLayout.CENTER));
+            // Buttons
             this.add(new CategoryView.CreateButton(expensesPanel, categoryPanel));
             this.add(new CategoryView.DeleteButton(expensesPanel, categoryPanel));
         }
@@ -35,17 +40,22 @@ public class CategoryView extends View {
     private static class CreateButton extends JButton {
         CreateButton(ExpensesView expensesPanel, CategoryView categoryPanel) {
             super("Create");
-            this.addActionListener(event -> createNewExpense(expensesPanel, categoryPanel));
+            // On click
+            this.addActionListener(event -> createNewCategory(expensesPanel, categoryPanel));
         }
 
-        private void createNewExpense(ExpensesView expensesPanel, CategoryView categoryPanel) {
+        private void createNewCategory(ExpensesView expensesPanel, CategoryView categoryPanel) {
             try {
-                CategoryDTO categoryDTO = new CategoryDTO(nameField.getText());
                 if (nameField.getText().isEmpty()) throw new FieldException();
+                CategoryDTO categoryDTO = new CategoryDTO(nameField.getText());
+                // Create new category in Controller
                 controller.create(categoryDTO);
+                // Add new row in Category table
                 categoryList.addRow(categoryDTO);
+                // Add new category in Expenses category drop down
                 expensesPanel.addCategory(categoryDTO.getName());
             } catch (ExpensesManagerException e) {
+                // Show error dialog with threw message from controller
                 e.showErrorDialog(categoryPanel, e.getMessage());
             }
         }
@@ -54,6 +64,7 @@ public class CategoryView extends View {
     private static class DeleteButton extends JButton {
         DeleteButton(ExpensesView expensesPanel, CategoryView categoryPanel) {
             super("Delete");
+            // On click
             this.addActionListener(event -> deleteExpense(expensesPanel, categoryPanel));
         }
 
@@ -61,8 +72,11 @@ public class CategoryView extends View {
             try {
                 JTable categoriesTable = categoryList.getTable();
                 int selectedRow = getSelectedRow(categoriesTable);
+                // Delete selected category from Controller
                 controller.delete(getSelectedCategory(selectedRow, categoriesTable), ETable.CATEGORY);
+                // Delete selected category from categories table
                 expensesPanel.deleteCategory(getSelectedCategoryName(selectedRow, categoriesTable));
+                // Delete selected category from categories drop down in Expenses
                 categoryList.deleteRow(selectedRow);
             } catch (ExpensesManagerException e) {
                 e.showErrorDialog(categoryPanel, e.getMessage());

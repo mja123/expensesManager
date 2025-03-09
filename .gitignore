@@ -5,7 +5,7 @@ build/
 !**/src/test/**/build/
 
 ### IntelliJ IDEA ###
-.idea/
+.idea
 *.iml
 *.ipr
 out/
@@ -36,4 +36,4 @@ bin/
 
 ### Mac OS ###
 .DS_Store
-**/**/variables.properties
+src/main/resources/variables.properties

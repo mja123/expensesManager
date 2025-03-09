@@ -1,5 +1,8 @@
 package org.example.model.dto;
 
+import org.example.controller.Controller;
+import org.example.utils.excpetions.ServerException;
+
 import java.sql.Date;
 
 public class ExpenseDTO implements IDTO {
@@ -19,12 +22,11 @@ public class ExpenseDTO implements IDTO {
         this.category = category;
     }
 
-    public ExpenseDTO(Integer id, String name, Double amount, Date date, Integer category) {
-        this.id = id;
+    public ExpenseDTO(String name, Double amount, Date date, String categoryName) throws ServerException {
         this.name = name;
         this.amount = amount;
         this.date = date;
-        this.category = category;
+        this.category = Controller.getCategoryId(categoryName);
     }
 
     public Integer getId() {

@@ -1,4 +1,4 @@
-package org.example;
+package org.example.model;
 
 
 import java.sql.Connection;
@@ -11,22 +11,21 @@ public class DBConnection {
     private static Connection INSTANCE;
 
     public static Connection getConnection() {
+        // Singleton method to use only one connection
         if (INSTANCE == null) {
-            return setConnection();
+            INSTANCE = setConnection();
         }
         return INSTANCE;
     }
 
     private static Connection setConnection() {
+        // Create new database connection based on environment variables
         try {
             return DriverManager.getConnection(getProperty("CONNECTOR") + "://" + getProperty("HOST") +
                     "/" + getProperty("DB") + "?user=" + getProperty("USERNAME") +
                     "&password=" + getProperty("PASSWORD"));
 
         } catch (SQLException ex) {
-            System.out.println("SQLException: " + ex.getMessage());
-            System.out.println("SQLState: " + ex.getSQLState());
-            System.out.println("VendorError: " + ex.getErrorCode());
             throw new RuntimeException("Set connection error");
         }
     }

@@ -15,6 +15,7 @@ public class PropertiesUtils {
     }
 
     public static String getProperty(String value) {
+        // Get property based on properties file
         try (FileInputStream inputStream = new FileInputStream(path)) {
             properties.load(inputStream);
             return properties.getProperty(value);

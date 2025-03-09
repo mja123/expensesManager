@@ -15,16 +15,23 @@ import java.util.List;
 import java.util.Map;
 
 public class ObjectBuilder {
-    public static IDTO setValues(ResultSet data, String table) throws SQLException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    private static final String DTO_BASE_PATH = "org.example.model.dto.";
+
+    public static IDTO setValues(ResultSet data, String table)
+            throws SQLException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException,
+            InstantiationException, IllegalAccessException {
         table = makeSingular(table);
         String className = getClassName(table);
-        Class<?> targetClass = Class.forName("org.example.model.dto.".concat(className));
+        Class<?> targetClass = Class.forName(DTO_BASE_PATH.concat(className));
+        // Create new DTO object with empty constructor
         IDTO object = (IDTO) targetClass.getConstructor().newInstance();
+        // Get DTO attributes based on ResultSet
         Map<String, Map<Object, Object>> attributes = getAttributes(data);
 
         for (Map.Entry<String,Map<Object, Object>> attribute : attributes.entrySet()) {
+            // Set attributes with setters
            String setter = makeSetter(attribute.getKey());
-            invokeSetter(object, setter, attribute);
+           invokeSetter(object, setter, attribute);
         }
         return object;
     }
@@ -33,13 +40,14 @@ public class ObjectBuilder {
     private static void invokeSetter(IDTO object, String setter,
                                      Map.Entry<String, Map<Object, Object>> attribute) {
         try {
+            // Get row with data
             Map.Entry<Object, Object> row = attribute.getValue().entrySet().stream().findFirst().get();
 
             Method method;
             switch (row.getValue().getClass().getTypeName()) {
+                // Set attributes based on data type
                 case "java.lang.Integer" -> {
                     method = object.getClass().getMethod(setter, Integer.class);
-                    System.out.println(Integer.valueOf((row.getValue().toString())) + " type: " + Integer.valueOf((row.getValue().toString())).getClass().getTypeName());
                     method.invoke(object, Integer.valueOf((row.getValue().toString())));
                 }
                 case "java.lang.String" -> {
@@ -63,26 +71,32 @@ public class ObjectBuilder {
 
         }
     }
-    private static Map<String, Map<Object, Object>> getAttributes(ResultSet data) throws SQLException, ClassNotFoundException {
+
+    private static Map<String, Map<Object, Object>> getAttributes(ResultSet data) throws SQLException,
+            ClassNotFoundException {
+        // Get attributes from ResultSet
         ResultSetMetaData metaData = data.getMetaData();
+        // Store attributes in map with form: <identifier: <type, value>>
         Map<String, Map<Object, Object>> attributes = new HashMap<>();
         if (data.isBeforeFirst()) data.next();
         for (int i = 1; i < metaData.getColumnCount() + 1; i++) {
             Object type = Class.forName(parseSQLTypes(metaData.getColumnTypeName(i)));
 
             String identifier = metaData.getColumnName(i);
-            int columnIndex = data.findColumn(identifier);
-            Object value = data.getObject(columnIndex);
+            Object value = data.getObject(i);
             attributes.put(identifier, Map.of(type, value));
         }
         return attributes;
     }
+
     private static String getClassName(String table) {
+        // Make first letter capital and add DTO suffix
         return table.substring(0, 1).toUpperCase()
                 .concat(table.substring(1) + "DTO");
     }
 
     private static String makeSetter(String identifier) {
+        // Make attribute setter following conventions
         return "set"
                 .concat(identifier.substring(0, 1).toUpperCase()
                 .concat(identifier.substring(1)));
@@ -98,6 +112,7 @@ public class ObjectBuilder {
     }
 
     private static String parseSQLTypes(String type) throws SQLException {
+        // Types equivalence
         return switch (type) {
             case "INT" -> "java.lang.Integer";
             case "VARCHAR" -> "java.lang.String";
@@ -107,10 +122,13 @@ public class ObjectBuilder {
         };
     }
 
-    public static List<IDTO> setObjects(ResultSet data, String table) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, SQLException {
+    public static List<IDTO> setObjects(ResultSet data, String table)
+            throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException,
+            IllegalAccessException, SQLException {
+        // Set a DTOs list with attributes set
         table = makeSingular(table);
         String className = getClassName(table);
-        Class<?> targetClass = Class.forName("org.example.model.dto.".concat(className));
+        Class<?> targetClass = Class.forName(DTO_BASE_PATH.concat(className));
         List<IDTO> records = new ArrayList<>();
         while (data.next()){
             IDTO object = (IDTO) targetClass.getConstructor().newInstance();

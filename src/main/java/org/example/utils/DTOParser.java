@@ -8,34 +8,32 @@ import java.util.*;
 
 public class DTOParser {
     static public Map<String, Map<Object, Object>> getDTOData(IDTO object) {
+        // Map with <Attribute: <Type, Value>> form
         Map<String, Map<Object, Object>> values = new HashMap<>();
+        // Get dto class getter methods
         List<Method>methods = Arrays.stream(object.getClass().getDeclaredMethods())
                 .filter(m -> m.getName().startsWith("get"))
                 .toList();
-        methods.forEach(m -> System.out.println(m.getName()));
         for (Method method : methods) {
+            // Get getter name (attribute)
             String identifier = method.getName().substring(3).toLowerCase();
             Object type = method.getReturnType().getTypeName();
             Object value;
             try {
-                value = method.invoke(object, (Object[]) null);
-                System.out.println("method: " + method.getName() + " value: " + value);
+                // Invoke getter
+                value = method.invoke(object);
             } catch (IllegalAccessException | InvocationTargetException e) {
                 throw new RuntimeException("We couldn't invoke " + method.getName() + " method");
             }
             if (value == null) continue;
             values.put(identifier, Map.of(type, value));
-
         }
-        values.entrySet().forEach((r -> {
-            System.out.println("Identifier: " + r.getKey());
-            r.getValue().forEach((key, value1) -> System.out.println("value " + value1));
-        }));
         return values;
     }
 
-    static public String tableName(IDTO object) {
+    static public String getTableName(IDTO object) {
         String[] splitClassName = object.getClass().getName().split("\\.");
+        // Make Java class plural
         return makePlural(splitClassName[splitClassName.length -1].split("(!?DTO)")[0].toLowerCase());
     }
 
